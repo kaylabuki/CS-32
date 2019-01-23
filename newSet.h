@@ -49,7 +49,7 @@ private:
 	ItemType* m_array;
 	int m_size;
 	int m_items;
-	void sort();
+	ItemType sort(int index) const;
 };
 
 #endif
