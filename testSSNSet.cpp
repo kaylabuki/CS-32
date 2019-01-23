@@ -4,9 +4,9 @@
 #include <cassert>
 using namespace std;
 
-int main()
-{
-	SSNSet s;
-	assert(s.add(123456));
-	cout << s.size();
-}
+//int main()
+//{
+//	SSNSet s;
+//	assert(s.add(123456));
+//	cout << s.size();
+//}

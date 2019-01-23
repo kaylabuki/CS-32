@@ -1,6 +1,7 @@
 #ifndef _SET_H
 #define _SET_H
 #include <string>
+using namespace std;
 
 const int DEFAULT_MAX_ITEMS = 250;
 using ItemType = unsigned long;
