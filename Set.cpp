@@ -1,182 +1,114 @@
 #include "Set.h"
-#include <cassert>
 #include <iostream>
+using namespace std;
 
-int main(){
-
-	// Testing:
-	//insert()
-	//erase()
-	//contains()
-	//empty()
-	//size()
-	Set s;
-	assert(!s.erase("a"));
-	assert(!s.contains("a"));
-	assert(s.size() == 0);
-	assert(s.empty());
-	assert(s.insert("a"));
-	assert(s.size() == 1);
-	assert(s.insert("b"));
-	assert(s.size() == 2);
-	assert(!s.insert("b"));
-	assert(s.size() == 2);
-	assert(s.insert("c"));
-	assert(s.size() == 3);
-	assert(!s.erase("d"));
-	assert(s.size() == 3);
-	assert(s.erase("b"));
-	assert(s.size() == 2);
-	assert(s.contains("a"));
-	assert(!s.contains("b"));
-	assert(s.contains("c"));
-
-	cout << "All tests passed";
-}
-
-Set::Set() //DONE
+Set::Set() 
 {
 	m_size = 0;
-	head = nullptr;
-	tail = nullptr;
 }
 
-Set::~Set()
-{
-	//When a Set is destroyed, the nodes in the linked list must be deallocated.
-}
-
-//Set::Set(? ? ? ) //const Set& other
-//{
-//	//When a brand new Set is created as a copy of an existing Set, enough new nodes must be allocated to hold a duplicate of the original list.
-//}
-
-//Set& operator=(? ? ? ) //const Set& rhs
-//{
-//	When an existing Set(the left - hand side) is assigned the value of another Set(the right - hand side), the result must be that the left - hand side object is a duplicate of the right - hand side object, with no memory leak of list nodes(i.e.no list node from the old value of the left - hand side should be still allocated yet inaccessible).
-//}
-
-bool Set::empty() const //DONE
+bool Set::empty() const
 {
 	if (this->size() == 0)
 		return true;
 	return false;
 }
 
-int Set::size() const //DONE
+int Set::size() const
 {
 	return m_size;
 }
 
-bool Set::insert(const ItemType& value) //DONE
+bool Set::insert(const ItemType& value)
 {
-	Node *p;
-	
-	//Test to see if the value already exists in the set
-	p = head;
-	while (p != nullptr)
-	{
-		if (p->value == value)
+	if (this->size() == DEFAULT_MAX_ITEMS)
+		return false;
+	for (int i = 0; i < this->size(); i++)
+		if (m_array[i] == value)
 			return false;
-		p = p->next;
-	}
-
-	p = new Node;
-	p->value = value;
-	p->next = head;
-	p->prev = nullptr;
-	head = p;
-
-	//CASE 1: the set contains 0 nodes
-	if (p->next == nullptr)
-		tail = p;
-	//CASE 2: the set contains 1 or more nodes
-	else
-		p->next->prev = p;
+	m_array[this->size()] = value;
 	m_size++;
 	return true;
 }
 
-bool Set::erase(const ItemType& value) //DONE
+bool Set::erase(const ItemType& value)
 {
-	//Test to see if the value exists in the set
+	int index = 0;
 	bool found = false;
-	Node *p = head;
-	while (p != nullptr)
+	for (int i = 0; i < this->size(); i++)
 	{
-		if (p->value == value)
+		if (m_array[i] == value)
 		{
+			index = i;
 			found = true;
 			break;
 		}
-		p = p->next;
 	}
-
-	if (!found)
-		return false;
-
-	//CASE 1: the set contains 0 nodes
-	if (head == nullptr)
-		return false;
-
-	//CASE 2: the item we want to delete belongs to the first node
-	if (head->value == value)
+	if (found)
 	{
-		Node *killMe = head;
-		head = killMe->next;
-		killMe->next->prev = nullptr;
-		delete killMe;
+		for (int i = index; i < this->size() - 1; i++)
+		{
+			m_array[i] = m_array[i + 1];
+		}
 		m_size--;
-		return true;
 	}
-
-	//CASE 3: the item we want to delete belongs to some other node
-	p = head;
-
-	while (p != nullptr)
-	{
-		if (p->next != nullptr && p->next->value == value)
-			break;
-		p = p->next;
-	}
-
-	if (p != nullptr)
-	{
-		Node *killMe = p->next;
-		p->next = killMe->next;
-		p->next->prev = p->prev;
-		delete killMe;
-		m_size--;
-		if (p->next == nullptr) //checks if last node in set and
-			tail = p; //adjusts p
-	}
-
-	return true;
+	return found;
 }
 
-bool Set::contains(const ItemType& value) const //DONE
+bool Set::contains(const ItemType& value) const
 {
-	Node *p = head;
-
-	//CASE 1: Set is empty, return false
-	if (head == nullptr)
-		return false;
-
-	//CASE 2: Head's value equals value (first in set), return true
-	if (head->value == value)
-		return true;
-	
-	//CASE 3: Traverse set to find value, if found return true
-	while (p != nullptr)
-	{
-		if (p->next != nullptr && p->next->value == value)
+	for (int i = 0; i < this->size(); i++)
+		if (m_array[i] == value)
 			return true;
-		p = p->next;
-	}
-
-	//CASE 4: Once fully traversed and value is not found, return false
 	return false;
 }
 
-bool Set::get(int pos, ItemType& value) const { return false; }
-void Set::swap(Set& other) {}
+bool Set::get(int i, ItemType& value) const
+{
+	if (i < 0 || i >= this->size())
+		return false;
+	else
+	{
+		value = this->sort(i);
+		return true;
+	}
+}
+
+void Set::swap(Set& other)
+{
+	int i = 0;
+	while (other.size() > i|| this->size() > i)
+	{
+		ItemType temp = other.m_array[i];
+		other.m_array[i] = m_array[i];
+		m_array[i] = temp;
+		i++;
+	}
+	int tempSize = other.m_size;
+	other.m_size = m_size;
+	m_size = tempSize;
+}
+
+ItemType Set::sort(int index) const
+{
+	int size = m_size;
+	ItemType sorted[DEFAULT_MAX_ITEMS];
+
+	for (int i = 0; i < size; i++)
+		sorted[i] = m_array[i];
+
+	for (int i = 0; i < size; i++)
+	{
+		int minIndex = i;
+
+		for (int j = i; j < size; j++)
+			if (sorted[minIndex] > sorted[j])
+				minIndex = j;
+
+		ItemType minimum = sorted[minIndex];
+		sorted[minIndex] = sorted[i];
+		sorted[i] = minimum;
+	}
+
+	return sorted[index];
+}
