@@ -1,2 +1,2 @@
-# CS32
+# CS32 HW1
 CS 32 at UCLA, Winter 2019
