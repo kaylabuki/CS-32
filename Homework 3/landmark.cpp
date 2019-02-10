@@ -6,9 +6,9 @@ class Landmark {
 public:
 	Landmark(string name) { m_name = name; }
 	virtual ~Landmark() {}
-	string name() const { return m_name; } 
+	string name() const { return m_name; }
 	virtual string icon() const = 0;
-	virtual string color() const { return "yellow";}
+	virtual string color() const { return "yellow"; }
 private:
 	string m_name;
 };
@@ -16,7 +16,7 @@ private:
 class Hotel : public Landmark
 {
 public:
-	Hotel(string name) : Landmark(name), m_name(name){}
+	Hotel(string name) : Landmark(name), m_name(name) {}
 	virtual ~Hotel()
 	{
 		cout << "Destroying the hotel " << m_name << "." << endl;
@@ -29,14 +29,14 @@ private:
 class Restaurant : public Landmark
 {
 public:
-	Restaurant(string name, int capacity) 
-		: Landmark(name), m_name(name), m_capacity(capacity){}
-	virtual ~Restaurant() 
+	Restaurant(string name, int capacity)
+		: Landmark(name), m_name(name), m_capacity(capacity) {}
+	virtual ~Restaurant()
 	{
 		cout << "Destroying the restaurant " << m_name << "." << endl;
 	}
-	virtual string icon() const 
-	{ 
+	virtual string icon() const
+	{
 		if (m_capacity < 40)
 			return "small knife/fork";
 		else
@@ -53,7 +53,7 @@ public:
 	Hospital(string name) : Landmark(name), m_name(name) {}
 	virtual ~Hospital()
 	{
-		cout << "Destroying the hospital " << m_name << "." << endl; 
+		cout << "Destroying the hospital " << m_name << "." << endl;
 	}
 	virtual string icon() const { return "H"; }
 	virtual string color() const { return "blue"; }
