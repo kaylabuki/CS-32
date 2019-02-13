@@ -41,8 +41,14 @@ int firstTrue(const double a[], int n)
 		return -1;
 	else if (somePredicate(a[0]))
 		return 0;
-	else if (firstTrue(a + 1, n - 1) != -1)
-		return 1 + firstTrue(a + 1, n - 1);
+	else
+	{
+		int result = firstTrue(a + 1, n - 1);
+		if (result != -1)
+			return 1 + result;
+		else
+			return result;
+	}
 }
 
 // Return the subscript of the smallest element in the array (i.e.,
