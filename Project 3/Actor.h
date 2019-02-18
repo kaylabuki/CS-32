@@ -12,10 +12,14 @@ public:
 	{
 		sw = theSW;
 	}
-	virtual void doSomething();
+	virtual void doSomething() = 0;
+	virtual bool canBeDamaged() = 0;
+	virtual bool canBeInfected() = 0;
+	virtual bool canBlockOthers() = 0;
+	virtual bool canBlockFlames() = 0;
 protected:
 	StudentWorld* sw;
-}
+};
 
 class Wall : public Actor
 {
@@ -23,13 +27,13 @@ public:
 	Wall(StudentWorld* sw)
 		: Actor(IID_WALL, SPRITE_WIDTH * level_x,
 			SPRITE_WIDTH * level_y, right, 0, sw)
-	{
+	{}
 
-	}
+	virtual void doSomething();
+	virtual bool canBeDamaged();
+	virtual bool canBeInfected();
+	virtual bool canBlockOthers();
+	virtual bool canBlockFlames();
+};
 
-	virtual void doSomething()
-	{
-
-	}
-}
 #endif // ACTOR_H_
