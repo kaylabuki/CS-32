@@ -2,7 +2,9 @@
 #define ACTOR_H_
 
 #include "GraphObject.h"
-
+#include "StudentWorld.h"
+#include <list>
+using namespace std;
 // Students:  Add code to this file, Actor.cpp, StudentWorld.h, and StudentWorld.cpp
 class Actor : public GraphObject
 {
@@ -24,7 +26,7 @@ protected:
 class Wall : public Actor
 {
 public:
-	Wall(StudentWorld* sw)
+	Wall(StudentWorld* sw, int level_x, int level_y)
 		: Actor(IID_WALL, SPRITE_WIDTH * level_x,
 			SPRITE_WIDTH * level_y, right, 0, sw)
 	{}
@@ -35,5 +37,26 @@ public:
 	virtual bool canBlockOthers();
 	virtual bool canBlockFlames();
 };
+
+class Penelope : public Actor
+{
+public:
+	Penelope(StudentWorld* sw, int level_x, int level_y)
+		: Actor(IID_PLAYER, SPRITE_WIDTH * level_x,
+			SPRITE_WIDTH * level_y, right, 0, sw)
+	{}
+
+	virtual void doSomething();
+	virtual bool canBeDamaged();
+	virtual bool canBeInfected();
+	virtual bool canBlockOthers();
+	virtual bool canBlockFlames();
+private:
+	bool alive = true;
+	//list<*Goodies> goodies; //to be used for part 2
+	bool infected = false;
+	int infectionCount = 0;
+};
+
 
 #endif // ACTOR_H_
