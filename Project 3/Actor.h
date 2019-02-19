@@ -10,7 +10,7 @@ class Actor : public GraphObject
 {
 public:
 	Actor(int imageId, double startX, double startY, int startDirection, int depth, StudentWorld* theSW)
-		: GraphObject(imageId, startX, startY, startDirection, depth, 1.0)
+		: GraphObject(imageId, startX, startY, startDirection, depth)
 	{
 		sw = theSW;
 	}
@@ -26,7 +26,7 @@ protected:
 class Wall : public Actor
 {
 public:
-	Wall(StudentWorld* sw, int level_x, int level_y)
+	Wall(StudentWorld* sw, double level_x, double level_y)
 		: Actor(IID_WALL, SPRITE_WIDTH * level_x,
 			SPRITE_WIDTH * level_y, right, 0, sw)
 	{}
@@ -41,7 +41,7 @@ public:
 class Penelope : public Actor
 {
 public:
-	Penelope(StudentWorld* sw, int level_x, int level_y)
+	Penelope(StudentWorld* sw, double level_x, double level_y)
 		: Actor(IID_PLAYER, SPRITE_WIDTH * level_x,
 			SPRITE_WIDTH * level_y, right, 0, sw)
 	{}
