@@ -2,9 +2,10 @@
 #define ACTOR_H_
 
 #include "GraphObject.h"
-#include "StudentWorld.h"
 #include <list>
 using namespace std;
+class StudentWorld;
+
 // Students:  Add code to this file, Actor.cpp, StudentWorld.h, and StudentWorld.cpp
 class Actor : public GraphObject
 {
@@ -19,7 +20,8 @@ public:
 	virtual bool canBeInfected() = 0;
 	virtual bool canBlockOthers() = 0;
 	virtual bool canBlockFlames() = 0;
-protected:
+	StudentWorld* getSW(){return sw;}
+private:
 	StudentWorld* sw;
 };
 

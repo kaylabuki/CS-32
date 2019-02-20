@@ -2,20 +2,24 @@
 #define STUDENTWORLD_H_
 
 #include "GameWorld.h"
-#include <string>
 #include "Level.h"
+#include "Actor.h"
+#include <iostream> // defines the overloads of the << operator
+#include <sstream>  // defines the type std::ostringstream#include <iomanip>  // defines the manipulator setw
+#include <string>
+#include <list>
+using namespace std;
 
-// Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
 
 class StudentWorld : public GameWorld
 {
 public:
-    StudentWorld(std::string assetPath);
-    virtual int init();
-    virtual int move();
-    virtual void cleanUp();
-
+	StudentWorld(std::string assetPath);
+	virtual int init();
+	virtual int move();
+	virtual void cleanUp();
 private:
+	list<Actor*> actors;
 };
 
 #endif // STUDENTWORLD_H_
