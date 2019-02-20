@@ -21,6 +21,7 @@ public:
 	virtual bool canBlockOthers() = 0;
 	virtual bool canBlockFlames() = 0;
 	StudentWorld* getSW(){return sw;}
+
 private:
 	StudentWorld* sw;
 };

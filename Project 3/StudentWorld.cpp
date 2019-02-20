@@ -49,12 +49,37 @@ int StudentWorld::init()
 	}
 }
 
-int StudentWorld::move()
+int StudentWorld::move() //COMMENTED TO-DO LIST!!!!
 {
-	// This code is here merely to allow the game to build, run, and terminate after you hit enter.
-	// Notice that the return value GWSTATUS_PLAYER_DIED will cause our framework to end the current level.
-	decLives();
-	return GWSTATUS_PLAYER_DIED;
+	list<Actor*>::iterator it = actors.begin();
+	while (it != actors.end())
+	{
+		// create alive function and test to see if the actor it points to is alive
+		{
+			(*it)->doSomething();
+			//check if Penelope died during this tick
+				return GWSTATUS_PLAYER_DIED;
+			//check if Penelope completed the current level
+				return GWSTATUS_FINISHED_LEVEL;
+		}
+	}
+
+	it = actors.begin();
+	while (it != actors.end())
+	{
+		if(true)// create alive function and test to see if the actor it points to is alive
+		{
+			delete *it;
+			it = actors.erase(it);
+		}
+		else
+			it++;
+	}
+
+	//	Update Display Text // update the score/lives/level text at screen top
+	// the player hasn’t completed the current level and hasn’t died, so
+	// continue playing the current level
+	return GWSTATUS_CONTINUE_GAME;
 }
 
 void StudentWorld::cleanUp()

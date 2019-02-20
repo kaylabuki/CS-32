@@ -5,7 +5,8 @@
 #include "Level.h"
 #include "Actor.h"
 #include <iostream> // defines the overloads of the << operator
-#include <sstream>  // defines the type std::ostringstream#include <iomanip>  // defines the manipulator setw
+#include <sstream>  // defines the type std::ostringstream
+#include <iomanip>  // defines the manipulator setw
 #include <string>
 #include <list>
 using namespace std;
