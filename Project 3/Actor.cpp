@@ -27,22 +27,26 @@ void Penelope::doSomething()
 		{
 		case KEY_PRESS_LEFT:
 			setDirection(left);
-			//check to make sure there's no wall
+			if (getSW()->getContents(curX - 4, curY) == "wall")
+				break;
 			moveTo(curX - 4, curY);
 			break;
 		case KEY_PRESS_RIGHT:
 			setDirection(right);
-			//check to make sure there's no wall
+			if (getSW()->getContents(curX + 4, curY) == "wall")
+				break;
 			moveTo(curX + 4, curY);
 			break;
 		case KEY_PRESS_UP:
 			setDirection(up);
-			//check to make sure there's no wall
+			if (getSW()->getContents(curX, curY + 4) == "wall")
+				break;
 			moveTo(curX, curY + 4);
 			break;
 		case KEY_PRESS_DOWN:
 			setDirection(down);
-			//check to make sure there's no wall
+			if (getSW()->getContents(curX, curY - 4) == "wall")
+				break;
 			moveTo(curX, curY - 4);
 			break;
 		}

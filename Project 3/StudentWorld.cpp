@@ -102,3 +102,33 @@ bool getSWKey(StudentWorld* sw, int& ch)
 {
 	return sw->getKey(ch);
 }
+
+string StudentWorld::getContents(double col, double row)
+{
+	//creates Level object using assetPath() 
+	Level lev(assetPath());
+	//creates stringstream text file name using getLevel()
+	ostringstream levelFile;
+	levelFile.fill('0');
+	levelFile << "level" << setw(2) << getLevel() << ".txt";
+	//iterates through level file to find locations of Penelope and the walls
+	lev.loadLevel(levelFile.str());
+	Level::MazeEntry ge = lev.getContentsOf(col, row);
+	switch (ge)
+	{
+		case Level::empty:
+		{
+			return;
+			break;
+		}
+		case Level::wall:
+		{
+			return "wall";
+			break;
+		}
+		case Level::player:
+		{
+			return "player";
+		}
+	}
+}

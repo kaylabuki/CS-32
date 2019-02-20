@@ -19,8 +19,10 @@ public:
 	virtual int init();
 	virtual int move();
 	virtual void cleanUp();
+	string StudentWorld::getContents(double col, double row);
 private:
 	list<Actor*> actors;
+	Actor* penelope;
 };
 
 #endif // STUDENTWORLD_H_
