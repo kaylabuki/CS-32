@@ -34,14 +34,20 @@ int StudentWorld::init()
 				Level::MazeEntry ge = lev.getContentsOf(col, row);
 				switch (ge)
 				{
-				case Level::wall:
-					Actor* wall = new Wall(this, col, row);
-					//add to list
-					break;
-				case Level::player:
-					Actor* penelope = new Penelope(this, col, row);
-					//add to list
-					break;
+					case Level::wall:
+					{
+						Actor* wall = new Wall(this, col, row);
+						wall->setAlive(true);
+						actors.push_back(wall);
+						break;
+					}
+					case Level::player:
+					{
+						Actor* penelope = new Penelope(this, col, row);
+						penelope->setAlive(true);
+						actors.push_back(penelope);
+						break;
+					}
 				}
 			}
 		}
@@ -54,12 +60,19 @@ int StudentWorld::move() //COMMENTED TO-DO LIST!!!!
 	list<Actor*>::iterator it = actors.begin();
 	while (it != actors.end())
 	{
-		// create alive function and test to see if the actor it points to is alive
+		if((*it)->alive())
 		{
+			// Tell current actor to doSomething()
 			(*it)->doSomething();
-			//check if Penelope died during this tick
-				return GWSTATUS_PLAYER_DIED;
+			// Iterate through list to find Penelope. If found dead, return GWSTATUS_PLAYER_DEAD
+			list<Actor*>::iterator findPenelope = actors.begin();
+			while (findPenelope != actors.end())
+			{
+				if((*it)->isPenelope() && !((*it)->alive()))
+					return GWSTATUS_PLAYER_DIED;
+			}
 			//check if Penelope completed the current level
+			//CREATE FUNCTION TO CHECK IF LEVEL HAS BEEN COMPLETED
 				return GWSTATUS_FINISHED_LEVEL;
 		}
 	}
@@ -67,7 +80,7 @@ int StudentWorld::move() //COMMENTED TO-DO LIST!!!!
 	it = actors.begin();
 	while (it != actors.end())
 	{
-		if(true)// create alive function and test to see if the actor it points to is alive
+		if(!(*it)->alive())
 		{
 			delete *it;
 			it = actors.erase(it);
@@ -76,9 +89,8 @@ int StudentWorld::move() //COMMENTED TO-DO LIST!!!!
 			it++;
 	}
 
-	//	Update Display Text // update the score/lives/level text at screen top
-	// the player hasn’t completed the current level and hasn’t died, so
-	// continue playing the current level
+	//	UPDATE DISPLAY TEXT 
+	//	UPDATE THE SCORE/LIVES/LEVEL AT THE TOP OF THE SCREEN
 	return GWSTATUS_CONTINUE_GAME;
 }
 

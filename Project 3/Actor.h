@@ -20,10 +20,13 @@ public:
 	virtual bool canBeInfected() = 0;
 	virtual bool canBlockOthers() = 0;
 	virtual bool canBlockFlames() = 0;
+	virtual bool isPenelope() { return false; } 
+	bool alive() { return lifeStatus; }
+	void setAlive(bool set) { lifeStatus = set; }
 	StudentWorld* getSW(){return sw;}
-
 private:
 	StudentWorld* sw;
+	bool lifeStatus;
 };
 
 class Wall : public Actor
@@ -54,8 +57,8 @@ public:
 	virtual bool canBeInfected();
 	virtual bool canBlockOthers();
 	virtual bool canBlockFlames();
+	virtual bool isPenelope();
 private:
-	bool alive = true;
 	//list<*Goodies> goodies; //to be used for part 2
 	bool infected = false;
 	int infectionCount = 0;

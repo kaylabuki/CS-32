@@ -1,4 +1,5 @@
 #include "Actor.h"
+#include "StudentWorld.h"
 
 // Students:  Add code to this file, Actor.h, StudentWorld.h, and StudentWorld.cpp
 
@@ -14,6 +15,7 @@ bool Penelope::canBeDamaged() { return true; }
 bool Penelope::canBeInfected() { return true; }
 bool Penelope::canBlockOthers() { return true; }
 bool Penelope::canBlockFlames() { return false; }
+bool Penelope::isPenelope() { return true; }
 void Penelope::doSomething()
 {
 	double curX = getX();
