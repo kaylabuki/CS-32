@@ -26,29 +26,39 @@ void Penelope::doSomething()
 		switch (ch)
 		{
 		case KEY_PRESS_LEFT:
+		{
 			setDirection(left);
-			if (getSW()->getContents(curX - 4, curY) == "wall")
+			if (getSW()->getContents(curX - 0.25, curY) == "wall")
 				break;
 			moveTo(curX - 4, curY);
 			break;
+		}
 		case KEY_PRESS_RIGHT:
+		{
 			setDirection(right);
-			if (getSW()->getContents(curX + 4, curY) == "wall")
+			double col = curX / 16;
+			double row = curY / 16;
+			if (getSW()->getContents(curX + 0.25, curY) == "wall")
 				break;
 			moveTo(curX + 4, curY);
 			break;
+		}
 		case KEY_PRESS_UP:
+		{
 			setDirection(up);
-			if (getSW()->getContents(curX, curY + 4) == "wall")
+			if (getSW()->getContents(curX, curY + 0.25) == "wall")
 				break;
 			moveTo(curX, curY + 4);
 			break;
+		}
 		case KEY_PRESS_DOWN:
+		{
 			setDirection(down);
-			if (getSW()->getContents(curX, curY - 4) == "wall")
+			if (getSW()->getContents(curX, curY - 0.25) == "wall")
 				break;
 			moveTo(curX, curY - 4);
 			break;
+		}
 		}
 	}
 }

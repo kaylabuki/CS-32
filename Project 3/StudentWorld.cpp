@@ -118,7 +118,7 @@ string StudentWorld::getContents(double col, double row)
 	{
 		case Level::empty:
 		{
-			return;
+			return "";
 			break;
 		}
 		case Level::wall:
@@ -129,6 +129,7 @@ string StudentWorld::getContents(double col, double row)
 		case Level::player:
 		{
 			return "player";
+			break;
 		}
 	}
 }
