@@ -11,7 +11,6 @@
 #include <list>
 using namespace std;
 
-
 class StudentWorld : public GameWorld
 {
 public:
@@ -19,7 +18,6 @@ public:
 	virtual int init();
 	virtual int move();
 	virtual void cleanUp();
-	//string StudentWorld::getContents(double col, double row);
 	bool blocked(double row, double col);
 private:
 	list<Actor*> actors;

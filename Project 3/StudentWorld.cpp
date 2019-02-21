@@ -37,11 +37,6 @@ int StudentWorld::init()
 				ge = lev.getContentsOf(col, row);
 				switch (ge)
 				{
-					case Level::empty:
-					case Level::exit:
-					{
-						break;
-					}
 					case Level::wall:
 					{
 						Actor* wall = new Wall(this, col, row);
@@ -55,6 +50,8 @@ int StudentWorld::init()
 						penelope = pnlp;
 						break;
 					}
+					default:
+						break;
 				}
 			}
 		}
@@ -64,38 +61,19 @@ int StudentWorld::init()
 	return GWSTATUS_LEVEL_ERROR;
 }
 
-int StudentWorld::move() //COMMENTED TO-DO LIST!!!!
+int StudentWorld::move()
 {
-	list<Actor*>::iterator it = actors.begin();
+	// Tell Penelope to doSomething()
 	penelope->doSomething();
+	list<Actor*>::iterator it = actors.begin();
 	while (it != actors.end())
 	{
-		if ((*it)->alive())
-		{
-			// Tell current actor to doSomething()
-			(*it)->doSomething();
-			// Check if penelope is dead
-			if (!(penelope->alive()))
-				return GWSTATUS_PLAYER_DIED;
-		}
-		//check if Penelope completed the current level
-		//CREATE FUNCTION TO CHECK IF LEVEL HAS BEEN COMPLETED
-		//return GWSTATUS_FINISHED_LEVEL;
+		// Tell current actor to doSomething()
+		(*it)->doSomething();
+		// Increment iterator
 		it++;
 	}
 	it = actors.begin();
-	while (it != actors.end())
-	{
-		if(!(*it)->alive())
-		{
-			delete *it;
-			it = actors.erase(it);
-		}
-		else
-			it++;
-	}
-	//	UPDATE DISPLAY TEXT 
-	//	UPDATE THE SCORE/LIVES/LEVEL AT THE TOP OF THE SCREEN
 	return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -103,9 +81,8 @@ void StudentWorld::cleanUp()
 {
 }
 
-bool StudentWorld::blocked(double row, double col)
+bool StudentWorld::blocked(double col, double row)
 {
-	//cout << "Penelope's Desired Location: (" << row << ", " << col << ")" << endl;
 	list<Actor*>::iterator it = actors.begin();
 	while (it != actors.end())
 	{
@@ -113,7 +90,6 @@ bool StudentWorld::blocked(double row, double col)
 		{
 			if (abs((*it)->getY() - row) < SPRITE_HEIGHT && abs((*it)->getX() - col) < SPRITE_WIDTH)
 			{
-				//cout << "Current actor's location: (" << (*it)->getY() << ", " << (*it)->getX() << ")" << endl;
 				return true;
 			}
 		}
@@ -121,34 +97,3 @@ bool StudentWorld::blocked(double row, double col)
 	}
 	return false;
 }
-
-//string StudentWorld::getContents(double col, double row)
-//{
-//	//creates Level object using assetPath() 
-//	Level lev(assetPath());
-//	//creates stringstream text file name using getLevel()
-//	ostringstream levelFile;
-//	levelFile.fill('0');
-//	levelFile << "level" << setw(2) << getLevel() << ".txt";
-//	//iterates through level file to find locations of Penelope and the walls
-//	lev.loadLevel(levelFile.str());
-//	Level::MazeEntry ge = lev.getContentsOf(col, row);
-//	switch (ge)
-//	{
-//		case Level::empty:
-//		{
-//			return "";
-//			break;
-//		}
-//		case Level::wall:
-//		{
-//			return "wall";
-//			break;
-//		}
-//		case Level::player:
-//		{
-//			return "player";
-//			break;
-//		}
-//	}
-//}
