@@ -9,12 +9,15 @@ GameWorld* createStudentWorld(string assetPath)
 	return new StudentWorld(assetPath);
 }
 
-// Students:  Add code to this file, StudentWorld.h, Actor.h and Actor.cpp
-
 StudentWorld::StudentWorld(string assetPath)
 	: GameWorld(assetPath)
 {
 	
+}
+
+StudentWorld::~StudentWorld()
+{
+	this->cleanUp();
 }
 
 int StudentWorld::init()
@@ -79,6 +82,14 @@ int StudentWorld::move()
 
 void StudentWorld::cleanUp()
 {
+	list<Actor*>::iterator it = actors.begin();
+	while (it != actors.end())
+	{
+		delete *it;
+		actors.pop_back();
+		it++;
+	}
+	delete penelope;
 }
 
 bool StudentWorld::blocked(double col, double row)
