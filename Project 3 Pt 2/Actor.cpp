@@ -1,4 +1,4 @@
-#include "Actor.h"
+﻿#include "Actor.h"
 #include "StudentWorld.h"
 
 // Students:  Add code to this file, Actor.h, StudentWorld.h, and StudentWorld.cpp
@@ -18,45 +18,46 @@ bool Penelope::canBlockFlames() { return false; }
 void Penelope::doSomething()
 {
 	int ch;
+	double curX = getX();
+	double curY = getY();
 	if (getSW()->getKey(ch))
 	{
-		cout << "(" << getX() << ", " << getY() << endl;
 		switch (ch)
 		{
 		case KEY_PRESS_LEFT:
 		{
 			setDirection(left);
-			if (getSW()->blocked(getX() - 4, getY()))
+			if (getSW()->blocked(curX - 4, curY))
 				break;
 			else
-				moveTo(getX() - 4, getY());
+				moveTo(curX - 4, curY);
 			break;
 		}
 		case KEY_PRESS_RIGHT:
 		{
 			setDirection(right);
-			if(getSW()->blocked(getX() + 4, getY()))
+			if(getSW()->blocked(curX + 4, curY))
 				break;
 			else
-				moveTo(getX() + 4, getY());
+				moveTo(curX + 4, curY);
 			break;
 		}
 		case KEY_PRESS_UP:
 		{
 			setDirection(up);
-			if (getSW()->blocked(getX(), getY() + 4))
+			if (getSW()->blocked(curX, curY + 4))
 				break;
 			else
-				moveTo(getX(), getY() + 4);
+				moveTo(curX, curY + 4);
 			break;
 		}
 		case KEY_PRESS_DOWN:
 		{
 			setDirection(down);
-			if (getSW()->blocked(getX(), getY() - 4))
+			if (getSW()->blocked(curX, curY - 4))
 				break;
 			else
-				moveTo(getX(), getY() - 4);
+				moveTo(curX, curY - 4);
 			break;
 		}
 		}
