@@ -21,6 +21,7 @@ public:
 	virtual bool canBeInfected() = 0;
 	virtual bool canBlockOthers() = 0;
 	virtual bool canBlockFlames() = 0;
+	virtual bool isWall() = 0; //DELETE!
 	bool alive() { return lifeStatus; }
 	void setAlive(bool set) { lifeStatus = set; }
 	StudentWorld* getSW(){return sw;}
@@ -42,6 +43,7 @@ public:
 	virtual bool canBeInfected();
 	virtual bool canBlockOthers();
 	virtual bool canBlockFlames();
+	virtual bool isWall() { return true; } //DELETE!
 };
 
 class Penelope : public Actor
@@ -57,6 +59,7 @@ public:
 	virtual bool canBeInfected();
 	virtual bool canBlockOthers();
 	virtual bool canBlockFlames();
+	virtual bool isWall() { return false; } // DELETE!
 private:
 	//list<*Goodies> goodies; //to be used for part 2
 	bool infected = false;

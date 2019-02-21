@@ -38,6 +38,7 @@ int StudentWorld::init()
 				switch (ge)
 				{
 					case Level::empty:
+					case Level::exit:
 					{
 						break;
 					}
@@ -56,8 +57,8 @@ int StudentWorld::init()
 					}
 				}
 			}
-			cout << endl;
 		}
+		cout << endl;
 		return GWSTATUS_CONTINUE_GAME;
 	}
 	return GWSTATUS_LEVEL_ERROR;
@@ -104,7 +105,7 @@ void StudentWorld::cleanUp()
 
 bool StudentWorld::blocked(double row, double col)
 {
-	cout << "Penelope's Desired Location: (" << row << ", " << col << ")" << endl;
+	//cout << "Penelope's Desired Location: (" << row << ", " << col << ")" << endl;
 	list<Actor*>::iterator it = actors.begin();
 	while (it != actors.end())
 	{
@@ -112,7 +113,7 @@ bool StudentWorld::blocked(double row, double col)
 		{
 			if (abs((*it)->getY() - row) < SPRITE_HEIGHT && abs((*it)->getX() - col) < SPRITE_WIDTH)
 			{
-				cout << "Current actor's location: (" << (*it)->getY() << ", " << (*it)->getX() << ")" << endl;
+				//cout << "Current actor's location: (" << (*it)->getY() << ", " << (*it)->getX() << ")" << endl;
 				return true;
 			}
 		}

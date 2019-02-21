@@ -22,7 +22,6 @@ void Penelope::doSomething()
 	double curY = getY();
 	if (getSW()->getKey(ch))
 	{
-		//cout << "(" << getX() << ", " << getY() << endl;
 		switch (ch)
 		{
 		case KEY_PRESS_LEFT:
