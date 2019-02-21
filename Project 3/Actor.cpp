@@ -1,4 +1,4 @@
-#include "Actor.h"
+﻿#include "Actor.h"
 #include "StudentWorld.h"
 
 // Students:  Add code to this file, Actor.h, StudentWorld.h, and StudentWorld.cpp
@@ -15,48 +15,50 @@ bool Penelope::canBeDamaged() { return true; }
 bool Penelope::canBeInfected() { return true; }
 bool Penelope::canBlockOthers() { return true; }
 bool Penelope::canBlockFlames() { return false; }
-bool Penelope::isPenelope() { return true; }
 void Penelope::doSomething()
 {
+	int ch;
 	double curX = getX();
 	double curY = getY();
-	int ch;
 	if (getSW()->getKey(ch))
 	{
+		//cout << "(" << getX() << ", " << getY() << endl;
 		switch (ch)
 		{
 		case KEY_PRESS_LEFT:
 		{
 			setDirection(left);
-			if (getSW()->getContents(curX - 0.25, curY) == "wall")
+			if (getSW()->blocked(curX - 4, curY))
 				break;
-			moveTo(curX - 4, curY);
+			else
+				moveTo(curX - 4, curY);
 			break;
 		}
 		case KEY_PRESS_RIGHT:
 		{
 			setDirection(right);
-			double col = curX / 16;
-			double row = curY / 16;
-			if (getSW()->getContents(curX + 0.25, curY) == "wall")
+			if(getSW()->blocked(curX + 4, curY))
 				break;
-			moveTo(curX + 4, curY);
+			else
+				moveTo(curX + 4, curY);
 			break;
 		}
 		case KEY_PRESS_UP:
 		{
 			setDirection(up);
-			if (getSW()->getContents(curX, curY + 0.25) == "wall")
+			if (getSW()->blocked(curX, curY + 4))
 				break;
-			moveTo(curX, curY + 4);
+			else
+				moveTo(curX, curY + 4);
 			break;
 		}
 		case KEY_PRESS_DOWN:
 		{
 			setDirection(down);
-			if (getSW()->getContents(curX, curY - 0.25) == "wall")
+			if (getSW()->blocked(curX, curY - 4))
 				break;
-			moveTo(curX, curY - 4);
+			else
+				moveTo(curX, curY - 4);
 			break;
 		}
 		}

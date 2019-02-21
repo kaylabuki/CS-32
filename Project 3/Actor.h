@@ -2,6 +2,7 @@
 #define ACTOR_H_
 
 #include "GraphObject.h"
+#include "GameConstants.h"
 #include <list>
 using namespace std;
 class StudentWorld;
@@ -20,7 +21,6 @@ public:
 	virtual bool canBeInfected() = 0;
 	virtual bool canBlockOthers() = 0;
 	virtual bool canBlockFlames() = 0;
-	virtual bool isPenelope() { return false; } 
 	bool alive() { return lifeStatus; }
 	void setAlive(bool set) { lifeStatus = set; }
 	StudentWorld* getSW(){return sw;}
@@ -57,7 +57,6 @@ public:
 	virtual bool canBeInfected();
 	virtual bool canBlockOthers();
 	virtual bool canBlockFlames();
-	virtual bool isPenelope();
 private:
 	//list<*Goodies> goodies; //to be used for part 2
 	bool infected = false;
