@@ -1,6 +1,7 @@
 #include "StudentWorld.h"
 #include "GameConstants.h"
 #include <string>
+#include <cstdlib>
 using namespace std;
 
 GameWorld* createStudentWorld(string assetPath)
@@ -30,4 +31,9 @@ int StudentWorld::move()
 
 void StudentWorld::cleanUp()
 {
+}
+
+bool StudentWorld::isAgentMovementBlockedAt(double x, double y) const
+{
+
 }

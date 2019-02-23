@@ -3,6 +3,7 @@
 
 #include "GameWorld.h"
 #include <string>
+#include <list>
 
 class Actor;
 class Penelope;
@@ -43,6 +44,10 @@ public:
 
 	// ********* One or two more functions will appear here shortly relating
 	// ********* to finding the nearest relevant agent for citizen/smart zombie movement
+
+private:
+	list<Actor*> actors;
+	Actor* penelope;
 };
 
 #endif // STUDENTWORLD_H_

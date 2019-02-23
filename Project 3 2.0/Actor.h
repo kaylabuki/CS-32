@@ -111,12 +111,16 @@ public:
 	virtual void doSomething();
 	virtual void activateIfAppropriate(Actor* a);
 	virtual void dieByFallOrBurnIfAppropriate();
+	int safetyTicks();
+	void decSafetyTicks();
+private:
+	int sftyTcks = 30;
 };
 
 class Goodie : public ActivatingObject
 {
 public:
-	Goodie(StudentWorld* w, double x, double y);
+	Goodie(StudentWorld* w, int imageID, double x, double y);
 	virtual void activateIfAppropriate(Actor* a);
 	virtual void dieByFallOrBurnIfAppropriate();
 
@@ -168,6 +172,15 @@ public:
 
 	// How many ticks since this human was infected by vomit?
 	int getInfectionDuration() const;
+
+	// Infects this human.
+	void infect();
+
+	// Increments the amount of ticks since this human was infected by vomit.
+	void incInfectionDuration();
+private:
+	bool infected;
+	int infectionDuration;
 };
 
 class Penelope : public Human
