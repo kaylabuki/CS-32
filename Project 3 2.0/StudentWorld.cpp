@@ -63,7 +63,7 @@ int StudentWorld::init()
 						break;
 					}
 					//case Level::player:
-					//case Level::citizen: // NOTE: set citizens member variable equal to this
+					//case Level::citizen: // NOTE: increment citizen member variable
 					case Level::pit:
 					{
 						Actor* pit = new Pit(this, col, row);
@@ -143,13 +143,29 @@ void StudentWorld::addActor(Actor* a)
 }
 
 void StudentWorld::recordCitizenGone()
-{}
+{
+	citizens--;
+}
 
 void StudentWorld::recordLevelFinishedIfAllCitizensGone()
-{}
+{
+	// figure out how to do
+}
 
 void StudentWorld::activateOnAppropriateActors(Actor* a)
-{}
+{
+	double aX = a->getX();
+	double aY = a->getY();
+	list<Actor*>::const_iterator it = actors.begin();
+	while (it != actors.end())
+	{
+		double deltaX = (*it)->getX() - aX;
+		double deltaY = (*it)->getY() - aY;
+		if (((deltaX*deltaX) + (deltaY*deltaY)) <= 100)
+			a->activateIfAppropriate(*it);
+		it++;
+	}
+}
 
 bool StudentWorld::isAgentMovementBlockedAt(double x, double y) const
 {
@@ -170,10 +186,32 @@ bool StudentWorld::isAgentMovementBlockedAt(double x, double y) const
 
 bool StudentWorld::isFlameBlockedAt(double x, double y) const
 {
-	return false; //TO DO
+	list<Actor*>::const_iterator it = actors.begin();
+	while (it != actors.end())
+	{
+		if((*it)->blocksFlame())
+		{
+			double deltaX = (*it)->getX() - x;
+			double deltaY = (*it)->getY() - y;
+			if (((deltaX*deltaX) + (deltaY*deltaY)) <= 100)
+				return true;
+			it++;
+		}
+	}
+	return false;
 }
 
 bool StudentWorld::isZombieVomitTargetAt(double x, double y) const
 {
-	return false; //TO DO
+	list<Actor*>::const_iterator it = actors.begin();
+	while (it != actors.end())
+	{
+		if ((*it)->getX() == x && (*it)->getY() == y)
+		{
+			if ((*it)->triggersZombieVomit)
+				return true;
+		}
+		it++;
+	}
+	return false;
 }
