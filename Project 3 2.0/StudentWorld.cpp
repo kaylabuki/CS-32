@@ -1,7 +1,10 @@
 #include "StudentWorld.h"
 #include "GameConstants.h"
+#include "Level.h"
 #include <string>
 #include <cstdlib>
+#include <sstream>
+#include <iomanip>
 using namespace std;
 
 GameWorld* createStudentWorld(string assetPath)
@@ -18,7 +21,33 @@ StudentWorld::StudentWorld(string assetPath)
 
 int StudentWorld::init()
 {
-    return GWSTATUS_CONTINUE_GAME;
+	//creates Level object using assetPath() 
+	Level lev(assetPath());
+	//creates stringstream text file name using getLevel()
+	ostringstream levelFile;
+	levelFile.fill('0');
+	levelFile << "level" << setw(2) << getLevel() << ".txt";
+	//Iterates through level file to find locations of Penelope and the walls
+	Level::LoadResult result = lev.loadLevel(levelFile.str());
+	Level::MazeEntry ge;
+	if (result == Level::load_success)
+	{
+		for (int row = 0; row < 16; row++)
+		{
+			for (int col = 0; col < 16; col++)
+			{
+				ge = lev.getContentsOf(col, row);
+				switch (ge)
+				{
+				case Level::empty:
+				case Level::exit:
+				case Level::wall:
+				case Level::player:
+				}
+			}
+		}
+		cout << endl;
+		return GWSTATUS_CONTINUE_GAME;
 }
 
 int StudentWorld::move()
@@ -33,7 +62,23 @@ void StudentWorld::cleanUp()
 {
 }
 
-bool StudentWorld::isAgentMovementBlockedAt(double x, double y) const
-{
+void StudentWorld::addActor(Actor* a)
+{}
 
-}
+void StudentWorld::recordCitizenGone()
+{}
+
+void StudentWorld::recordLevelFinishedIfAllCitizensGone()
+{}
+
+void StudentWorld::activateOnAppropriateActors(Actor* a)
+{}
+
+bool StudentWorld::isAgentMovementBlockedAt(double x, double y) const
+{}
+
+bool StudentWorld::isFlameBlockedAt(double x, double y) const
+{}
+
+bool StudentWorld::isZombieVomitTargetAt(double x, double y) const
+{}

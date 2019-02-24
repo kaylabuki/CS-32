@@ -4,6 +4,7 @@
 #include "GameWorld.h"
 #include <string>
 #include <list>
+using namespace std;
 
 class Actor;
 class Penelope;
