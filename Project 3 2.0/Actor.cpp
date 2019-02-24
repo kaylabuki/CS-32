@@ -110,8 +110,8 @@ VaccineGoodie::VaccineGoodie(StudentWorld* w, double x, double y)
 {}
 void VaccineGoodie::doSomething()
 {/*to do*/}
-void VaccineGoodie::pickUp(Penelope* p)
-{/*to do*/}
+//void VaccineGoodie::pickUp(Penelope* p)
+//{/*to do*/}
 
 
 // GAS CAN GOODIE Implementations
@@ -120,8 +120,8 @@ GasCanGoodie::GasCanGoodie(StudentWorld* w, double x, double y)
 {}
 void GasCanGoodie::doSomething()
 {/*to do*/}
-void GasCanGoodie::pickUp(Penelope* p)
-{/*to do*/}
+//void GasCanGoodie::pickUp(Penelope* p)
+//{/*to do*/}
 
 
 // LANDMINE GOODIE Implementations
@@ -130,8 +130,8 @@ LandmineGoodie::LandmineGoodie(StudentWorld* w, double x, double y)
 {}
 void LandmineGoodie::doSomething()
 {/*to do*/}
-void LandmineGoodie::pickUp(Penelope* p)
-{/*to do*/}
+//void LandmineGoodie::pickUp(Penelope* p)
+//{/*to do*/}
 
 
 // AGENT Implemenatiations

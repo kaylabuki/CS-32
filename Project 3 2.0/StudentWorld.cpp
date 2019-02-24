@@ -1,6 +1,7 @@
 #include "StudentWorld.h"
 #include "GameConstants.h"
 #include "Level.h"
+#include "Actor.h"
 #include <string>
 #include <cstdlib>
 #include <sstream>
@@ -17,6 +18,11 @@ GameWorld* createStudentWorld(string assetPath)
 StudentWorld::StudentWorld(string assetPath)
 : GameWorld(assetPath)
 {
+}
+
+StudentWorld::~StudentWorld()
+{
+	cleanUp();
 }
 
 int StudentWorld::init()
@@ -39,31 +45,102 @@ int StudentWorld::init()
 				ge = lev.getContentsOf(col, row);
 				switch (ge)
 				{
-				case Level::empty:
-				case Level::exit:
-				case Level::wall:
-				case Level::player:
+					//TO DO
+					case Level::empty:
+					{
+						break;
+					}
+					case Level::wall:
+					{
+						Actor* wall = new Wall(this, col, row);
+						addActor(wall);
+						break;
+					}
+					case Level::exit:
+					{
+						Actor* exit = new Exit(this, col, row);
+						addActor(exit);
+						break;
+					}
+					//case Level::player:
+					//case Level::citizen: // NOTE: set citizens member variable equal to this
+					case Level::pit:
+					{
+						Actor* pit = new Pit(this, col, row);
+						addActor(pit);
+						break;
+					}
+					//case Level::dumb_zombie:
+					//case Level::smart_zombie:
+					case Level::gas_can_goodie:
+					{
+						Actor* gasCanGoodie = new GasCanGoodie(this, col, row);
+						addActor(gasCanGoodie);
+						break;
+					}
+					case Level::landmine_goodie:
+					{
+						Actor* landmineGoodie = new LandmineGoodie(this, col, row);
+						addActor(landmineGoodie);
+						break;
+					}
+					case Level::vaccine_goodie:
+					{
+						Actor* vaccineGoodie = new VaccineGoodie(this, col, row);
+						addActor(vaccineGoodie);
+						break;
+					}
 				}
 			}
 		}
 		cout << endl;
 		return GWSTATUS_CONTINUE_GAME;
+	}
 }
 
 int StudentWorld::move()
 {
-    // This code is here merely to allow the game to build, run, and terminate after you hit enter.
-    // Notice that the return value GWSTATUS_PLAYER_DIED will cause our framework to end the current level.
-    decLives();
-    return GWSTATUS_PLAYER_DIED;
+	//penelope->doSomething();
+	list<Actor*>::iterator it = actors.begin();
+	while (it != actors.end())
+	{
+		// Tell current actor to doSomething()
+		if(!((*it)->isDead()))
+			(*it)->doSomething();
+
+		/*if (Penelope died during this tick)
+			return GWSTATUS_PLAYER_DIED;
+		if (Penelope completed the current level)
+			return GWSTATUS_FINISHED_LEVEL;*/
+
+		// Increment iterator
+		it++;
+	}
+
+	//// Remove newly-dead actors after each tick
+	//Remove and delete dead game objects
+	//	// Update the game status line
+	//	Update Display Text // update the score/lives/level text at screen top
+	return GWSTATUS_CONTINUE_GAME;
 }
 
 void StudentWorld::cleanUp()
 {
+	list<Actor*>::iterator it = actors.begin();
+	while (it != actors.end())
+	{
+		delete *it;
+		actors.pop_back();
+		it++;
+	}
+	delete penelope;
 }
 
 void StudentWorld::addActor(Actor* a)
-{}
+{
+	actors.push_back(a);
+	// TO DO: need to add more?
+}
 
 void StudentWorld::recordCitizenGone()
 {}
@@ -75,10 +152,28 @@ void StudentWorld::activateOnAppropriateActors(Actor* a)
 {}
 
 bool StudentWorld::isAgentMovementBlockedAt(double x, double y) const
-{}
+{
+	list<Actor*>::const_iterator it = actors.begin();
+	while (it != actors.end())
+	{
+		if ((*it)->blocksMovement())
+		{
+			if (abs((*it)->getY() - y) < SPRITE_HEIGHT && abs((*it)->getX() - x) < SPRITE_WIDTH)
+			{
+				return true;
+			}
+		}
+		it++;
+	}
+	return false;
+}
 
 bool StudentWorld::isFlameBlockedAt(double x, double y) const
-{}
+{
+	return false; //TO DO
+}
 
 bool StudentWorld::isZombieVomitTargetAt(double x, double y) const
-{}
+{
+	return false; //TO DO
+}

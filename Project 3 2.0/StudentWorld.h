@@ -49,6 +49,7 @@ public:
 private:
 	list<Actor*> actors;
 	Actor* penelope;
+	int citizens;
 };
 
 #endif // STUDENTWORLD_H_

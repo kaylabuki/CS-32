@@ -125,7 +125,7 @@ public:
 	virtual void dieByFallOrBurnIfAppropriate();
 
 	// Have p pick up this goodie.
-	virtual void pickUp(Penelope* p) = 0;
+	//virtual void pickUp(Penelope* p) = 0;
 };
 
 class VaccineGoodie : public Goodie
@@ -133,7 +133,7 @@ class VaccineGoodie : public Goodie
 public:
 	VaccineGoodie(StudentWorld* w, double x, double y);
 	virtual void doSomething();
-	virtual void pickUp(Penelope* p);
+	//virtual void pickUp(Penelope* p);
 };
 
 class GasCanGoodie : public Goodie
@@ -141,7 +141,7 @@ class GasCanGoodie : public Goodie
 public:
 	GasCanGoodie(StudentWorld* w, double x, double y);
 	virtual void doSomething();
-	virtual void pickUp(Penelope* p);
+	//virtual void pickUp(Penelope* p);
 };
 
 class LandmineGoodie : public Goodie
@@ -149,7 +149,7 @@ class LandmineGoodie : public Goodie
 public:
 	LandmineGoodie(StudentWorld* w, double x, double y);
 	virtual void doSomething();
-	virtual void pickUp(Penelope* p);
+	//virtual void pickUp(Penelope* p);
 };
 
 class Agent : public Actor
