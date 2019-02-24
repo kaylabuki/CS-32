@@ -22,6 +22,9 @@ public:
 	// Add an actor to the world.
 	void addActor(Actor* a);
 
+	// Increase citizen count
+	void addCitizen();
+
 	// Record that one more citizen on the current level is gone (exited,
 	// died, or turned into a zombie).
 	void recordCitizenGone();

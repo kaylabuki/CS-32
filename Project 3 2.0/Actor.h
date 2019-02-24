@@ -123,9 +123,7 @@ public:
 	Goodie(StudentWorld* w, int imageID, double x, double y);
 	virtual void activateIfAppropriate(Actor* a);
 	virtual void dieByFallOrBurnIfAppropriate();
-
-	// Have p pick up this goodie.
-	//virtual void pickUp(Penelope* p) = 0;
+	virtual void pickUp(Penelope* p) = 0;
 };
 
 class VaccineGoodie : public Goodie
@@ -133,7 +131,7 @@ class VaccineGoodie : public Goodie
 public:
 	VaccineGoodie(StudentWorld* w, double x, double y);
 	virtual void doSomething();
-	//virtual void pickUp(Penelope* p);
+	virtual void pickUp(Penelope* p);
 };
 
 class GasCanGoodie : public Goodie
@@ -141,7 +139,7 @@ class GasCanGoodie : public Goodie
 public:
 	GasCanGoodie(StudentWorld* w, double x, double y);
 	virtual void doSomething();
-	//virtual void pickUp(Penelope* p);
+	virtual void pickUp(Penelope* p);
 };
 
 class LandmineGoodie : public Goodie
@@ -149,7 +147,7 @@ class LandmineGoodie : public Goodie
 public:
 	LandmineGoodie(StudentWorld* w, double x, double y);
 	virtual void doSomething();
-	//virtual void pickUp(Penelope* p);
+	virtual void pickUp(Penelope* p);
 };
 
 class Agent : public Actor
@@ -183,29 +181,72 @@ private:
 	int infectionDuration;
 };
 
+
 class Penelope : public Human
 {
 public:
+	Penelope(StudentWorld* w, double x, double y);
+	virtual void doSomething();
+	virtual void useExitIfAppropriate();
+	virtual void dieByFallOrBurnIfAppropriate();
+	virtual void pickUpGoodieIfAppropriate(Goodie* g);
+
+	// Increase the number of vaccines the object has.
+	void increaseVaccines();
+
+	// Increase the number of flame charges the object has.
+	void increaseFlameCharges();
+
+	// Increase the number of landmines the object has.
+	void increaseLandmines();
+
+	// How many vaccines does the object have?
+	int getNumVaccines() const;
+
+	// How many flame charges does the object have?
+	int getNumFlameCharges() const;
+
+	// How many landmines does the object have?
+	int getNumLandmines() const;
+private:
+	int vaccines;
+	int flameCharges;
+	int landmines;
 };
+
 
 class Citizen : public Human
 {
 public:
+	Citizen(StudentWorld* w, double x, double y);
+	virtual void doSomething();
+	virtual void useExitIfAppropriate();
+	virtual void dieByFallOrBurnIfAppropriate();
 };
+
 
 class Zombie : public Agent
 {
 public:
+	Zombie(StudentWorld* w, double x, double y);
 };
+
 
 class DumbZombie : public Zombie
 {
 public:
+	DumbZombie(StudentWorld* w, double x, double y);
+	virtual void doSomeThing();
+	virtual void dieByFallOrBurnIfAppropriate();
 };
+
 
 class SmartZombie : public Zombie
 {
 public:
+	SmartZombie(StudentWorld* w, double x, double y);
+	virtual void doSomeThing();
+	virtual void dieByFallOrBurnIfAppropriate();
 };
 
 #endif // ACTOR_H_

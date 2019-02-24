@@ -45,7 +45,6 @@ int StudentWorld::init()
 				ge = lev.getContentsOf(col, row);
 				switch (ge)
 				{
-					//TO DO
 					case Level::empty:
 					{
 						break;
@@ -62,16 +61,37 @@ int StudentWorld::init()
 						addActor(exit);
 						break;
 					}
-					//case Level::player:
-					//case Level::citizen: // NOTE: increment citizen member variable
+					case Level::player:
+					{
+						Actor* penlope = new Penelope(this, col, row);
+						addActor(penlope);
+						break;
+					}
+					case Level::citizen:
+					{
+						Actor* citizen = new Citizen(this, col, row);
+						addActor(citizen);
+						addCitizen();
+						break;
+					}
 					case Level::pit:
 					{
 						Actor* pit = new Pit(this, col, row);
 						addActor(pit);
 						break;
 					}
-					//case Level::dumb_zombie:
-					//case Level::smart_zombie:
+					case Level::dumb_zombie:
+					{
+						Actor* dumbZombie = new DumbZombie(this, col, row);
+						addActor(dumbZombie);
+						break;
+					}
+					case Level::smart_zombie:
+					{
+						Actor* smartZombie = new SmartZombie(this, col, row);
+						addActor(smartZombie);
+						break;
+					}
 					case Level::gas_can_goodie:
 					{
 						Actor* gasCanGoodie = new GasCanGoodie(this, col, row);
@@ -100,25 +120,34 @@ int StudentWorld::init()
 
 int StudentWorld::move()
 {
-	//penelope->doSomething();
+	penelope->doSomething();
 	list<Actor*>::iterator it = actors.begin();
 	while (it != actors.end())
 	{
 		// Tell current actor to doSomething()
 		if(!((*it)->isDead()))
 			(*it)->doSomething();
-
-		/*if (Penelope died during this tick)
+		// Check if penelope died during this tick
+		if (penelope->isDead())
 			return GWSTATUS_PLAYER_DIED;
-		if (Penelope completed the current level)
+		/*if (Penelope completed the current level)
 			return GWSTATUS_FINISHED_LEVEL;*/
 
 		// Increment iterator
 		it++;
 	}
 
-	//// Remove newly-dead actors after each tick
-	//Remove and delete dead game objects
+	it = actors.begin();
+	// Remove newly-dead actors after each tick
+	while (it != actors.end())
+	{
+		if ((*it)->isDead())
+		{
+			delete *it;
+			actors.pop_front();
+		}
+		it++;
+	}
 	//	// Update the game status line
 	//	Update Display Text // update the score/lives/level text at screen top
 	return GWSTATUS_CONTINUE_GAME;
@@ -130,7 +159,7 @@ void StudentWorld::cleanUp()
 	while (it != actors.end())
 	{
 		delete *it;
-		actors.pop_back();
+		actors.pop_front();
 		it++;
 	}
 	delete penelope;
@@ -139,7 +168,11 @@ void StudentWorld::cleanUp()
 void StudentWorld::addActor(Actor* a)
 {
 	actors.push_back(a);
-	// TO DO: need to add more?
+}
+
+void StudentWorld::addCitizen()
+{
+	citizens++;
 }
 
 void StudentWorld::recordCitizenGone()
