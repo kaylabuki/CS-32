@@ -180,9 +180,15 @@ void StudentWorld::recordCitizenGone()
 	citizens--;
 }
 
+int StudentWorld::numCitizens()
+{
+	return citizens;
+}
+
 void StudentWorld::recordLevelFinishedIfAllCitizensGone()
 {
-	// figure out how to do
+	allCtznsGone = true;
+	// might be INCORRECT
 }
 
 void StudentWorld::activateOnAppropriateActors(Actor* a)
@@ -198,6 +204,11 @@ void StudentWorld::activateOnAppropriateActors(Actor* a)
 			a->activateIfAppropriate(*it);
 		it++;
 	}
+
+	double deltaPX = penelope->getX() - aX;
+	double deltaPY = penelope->getY() - aY;
+	if (((deltaPX*deltaPX) + (deltaPY*deltaPY)) <= 100)
+		a->activateIfAppropriate(penelope);
 }
 
 bool StudentWorld::isAgentMovementBlockedAt(double x, double y) const
@@ -241,7 +252,7 @@ bool StudentWorld::isZombieVomitTargetAt(double x, double y) const
 	{
 		if ((*it)->getX() == x && (*it)->getY() == y)
 		{
-			if ((*it)->triggersZombieVomit)
+			if ((*it)->triggersZombieVomit())
 				return true;
 		}
 		it++;

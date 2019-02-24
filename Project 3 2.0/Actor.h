@@ -94,6 +94,10 @@ public:
 	Flame(StudentWorld* w, double x, double y, int dir);
 	virtual void doSomething();
 	virtual void activateIfAppropriate(Actor* a);
+	int ticks();
+	void incTicks();
+private:
+	int ticksSinceCreation;
 };
 
 class Vomit : public ActivatingObject

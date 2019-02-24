@@ -29,6 +29,9 @@ public:
 	// died, or turned into a zombie).
 	void recordCitizenGone();
 
+	// Return number of citizens
+	int numCitizens();
+
 	// Indicate that the player has finished the level if all citizens
 	// are gone.
 	void recordLevelFinishedIfAllCitizensGone();
@@ -53,6 +56,7 @@ private:
 	list<Actor*> actors;
 	Actor* penelope;
 	int citizens;
+	bool allCtznsGone;
 };
 
 #endif // STUDENTWORLD_H_

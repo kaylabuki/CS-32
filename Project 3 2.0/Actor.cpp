@@ -44,7 +44,6 @@ Exit::Exit(StudentWorld* w, double x, double y)
 void Exit::doSomething() 
 {
 	world()->activateOnAppropriateActors(this);
-	// to do
 }
 void Exit::activateIfAppropriate(Actor* a) 
 {
@@ -59,9 +58,13 @@ Pit::Pit(StudentWorld* w, double x, double y)
 	: ActivatingObject(w, IID_PIT, x, y, 0, right)
 {}
 void Pit::doSomething()
-{/*to do*/}
+{
+	world()->activateOnAppropriateActors(this);
+}
 void Pit::activateIfAppropriate(Actor* a)
-{/*to do*/}
+{
+	a->dieByFallOrBurnIfAppropriate();
+}
 
 //_______________________________________________________________________________________//
 
@@ -70,9 +73,26 @@ Flame::Flame(StudentWorld* w, double x, double y, int dir)
 	: ActivatingObject(w, IID_FLAME, x, y, 0, right)
 {}
 void Flame::doSomething()
-{/*to do*/}
+{
+	if (isDead())
+		return;
+	else
+	{
+		incTicks();
+		if (ticks() == 2)
+		{
+			setDead();
+			return;
+		}
+		world()->activateOnAppropriateActors(this);
+	}
+}
 void Flame::activateIfAppropriate(Actor* a)
-{/*to do*/}
+{
+	a->dieByFallOrBurnIfAppropriate();
+}
+int Flame::ticks() { return ticksSinceCreation; }
+void Flame::incTicks() { ticksSinceCreation++; }
 
 //_______________________________________________________________________________________//
 
@@ -96,7 +116,10 @@ void Landmine::doSomething()
 void Landmine::activateIfAppropriate(Actor* a)
 {/*to do*/}
 void Landmine::dieByFallOrBurnIfAppropriate()
-{/*to do*/}
+{
+	// When another flame overlaps with a landmine it will trigger the landmine 
+	// and cause it to introduce flames all around the landmine.
+}
 int Landmine::safetyTicks() { return sftyTcks; }
 void Landmine::decSafetyTicks() { sftyTcks--; }
 
@@ -107,9 +130,13 @@ Goodie::Goodie(StudentWorld* w, int imageID, double x, double y)
 	: ActivatingObject(w, imageID, x, y, 1, right)
 {}
 void Goodie::activateIfAppropriate(Actor* a)
-{/*to do*/}
+{
+	a->pickUpGoodieIfAppropriate(this);
+}
 void Goodie::dieByFallOrBurnIfAppropriate()
-{/*to do*/}
+{
+	setDead();
+}
 
 //_______________________________________________________________________________________//
 
@@ -208,11 +235,14 @@ void Penelope::doSomething()
 }
 void Penelope::useExitIfAppropriate()
 {
-	//to do
+	if (world()->numCitizens() == 0)
+	{
+		//figure out how to inform studentWorld object that penelope has finished the current level
+	}
 }
 void Penelope::dieByFallOrBurnIfAppropriate()
 {
-	//to do
+	setDead();
 }
 void Penelope::pickUpGoodieIfAppropriate(Goodie* g)
 {
@@ -237,11 +267,17 @@ void Citizen::doSomething()
 }
 void Citizen::useExitIfAppropriate()
 {
-	//to do
+	world()->increaseScore(500);
+	setDead();
+	world()->recordCitizenGone();
+	world()->playSound(SOUND_CITIZEN_SAVED);
 }
 void Citizen::dieByFallOrBurnIfAppropriate()
 {
-	//to do
+	world()->increaseScore(-1000);
+	setDead();
+	world()->recordCitizenGone();
+	world()->playSound(SOUND_CITIZEN_DIE);
 }
 
 //_______________________________________________________________________________________//
@@ -265,7 +301,8 @@ void DumbZombie::doSomeThing()
 }
 void DumbZombie::dieByFallOrBurnIfAppropriate()
 {
-	//to do
+	setDead();
+	world()->increaseScore(1000);
 }
 
 //_______________________________________________________________________________________//
@@ -280,5 +317,6 @@ void SmartZombie::doSomeThing()
 }
 void SmartZombie::dieByFallOrBurnIfAppropriate()
 {
-	//to do
+	setDead();
+	world()->increaseScore(2000);
 }
