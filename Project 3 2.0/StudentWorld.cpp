@@ -27,6 +27,7 @@ StudentWorld::~StudentWorld()
 
 int StudentWorld::init()
 {
+	resetLevelFinished();
 	//creates Level object using assetPath() 
 	Level lev(assetPath());
 	//creates stringstream text file name using getLevel()
@@ -63,8 +64,7 @@ int StudentWorld::init()
 					}
 					case Level::player:
 					{
-						Actor* penlope = new Penelope(this, col, row);
-						addActor(penlope);
+						penelope = new Penelope(this, col, row);
 						break;
 					}
 					case Level::citizen:
@@ -130,8 +130,8 @@ int StudentWorld::move()
 		// Check if penelope died during this tick
 		if (penelope->isDead())
 			return GWSTATUS_PLAYER_DIED;
-		/*if (Penelope completed the current level)
-			return GWSTATUS_FINISHED_LEVEL;*/
+		if (levelFinished())
+			return GWSTATUS_FINISHED_LEVEL;
 
 		// Increment iterator
 		it++;
@@ -159,9 +159,10 @@ void StudentWorld::cleanUp()
 	while (it != actors.end())
 	{
 		delete *it;
-		actors.pop_front();
+		//actors.pop_front();
 		it++;
 	}
+	actors.clear();
 	delete penelope;
 }
 
@@ -187,8 +188,17 @@ int StudentWorld::numCitizens()
 
 void StudentWorld::recordLevelFinishedIfAllCitizensGone()
 {
-	allCtznsGone = true;
-	// might be INCORRECT
+	levelDone = true;
+}
+
+bool StudentWorld::levelFinished()
+{
+	return levelDone;
+}
+
+void StudentWorld::resetLevelFinished()
+{
+	levelDone = false;
 }
 
 void StudentWorld::activateOnAppropriateActors(Actor* a)

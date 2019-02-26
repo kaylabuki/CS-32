@@ -5,8 +5,8 @@
 Actor::Actor(StudentWorld* w, int imageID, double x, double y, int dir, int depth)
 	: GraphObject(imageID, SPRITE_WIDTH * x, SPRITE_HEIGHT * y, dir, depth)
 { sw = w; }
-bool Actor::isDead() const { return alive; }
-void Actor::setDead() { alive = false; }
+bool Actor::isDead() const { return dead; }
+void Actor::setDead() { dead = true; }
 StudentWorld* Actor::world() const { return sw; }
 void Actor::activateIfAppropriate(Actor* a) {}
 void Actor::useExitIfAppropriate(){}
@@ -231,12 +231,57 @@ Penelope::Penelope(StudentWorld* w, double x, double y)
 {}
 void Penelope::doSomething()
 {
-	//to do
+	int ch;
+	double curX = getX();
+	double curY = getY();
+	if (world()->getKey(ch))
+	{
+		switch (ch)
+		{
+		case KEY_PRESS_LEFT:
+		{
+			setDirection(left);
+			if (world()->isAgentMovementBlockedAt(curX - 4, curY))
+				break;
+			else
+				moveTo(curX - 4, curY);
+			break;
+		}
+		case KEY_PRESS_RIGHT:
+		{
+			setDirection(right);
+			if (world()->isAgentMovementBlockedAt(curX + 4, curY))
+				break;
+			else
+				moveTo(curX + 4, curY);
+			break;
+		}
+		case KEY_PRESS_UP:
+		{
+			setDirection(up);
+			if (world()->isAgentMovementBlockedAt(curX, curY + 4))
+				break;
+			else
+				moveTo(curX, curY + 4);
+			break;
+		}
+		case KEY_PRESS_DOWN:
+		{
+			setDirection(down);
+			if (world()->isAgentMovementBlockedAt(curX, curY - 4))
+				break;
+			else
+				moveTo(curX, curY - 4);
+			break;
+		}
+		}
+	}
 }
 void Penelope::useExitIfAppropriate()
 {
 	if (world()->numCitizens() == 0)
 	{
+		world()->recordLevelFinishedIfAllCitizensGone();
 		//figure out how to inform studentWorld object that penelope has finished the current level
 	}
 }
@@ -295,7 +340,7 @@ Zombie::Zombie(StudentWorld* w, double x, double y)
 DumbZombie::DumbZombie(StudentWorld* w, double x, double y)
 	: Zombie(w, x, y)
 {}
-void DumbZombie::doSomeThing()
+void DumbZombie::doSomething()
 {
 	//to do
 }
@@ -311,7 +356,7 @@ void DumbZombie::dieByFallOrBurnIfAppropriate()
 SmartZombie::SmartZombie(StudentWorld* w, double x, double y)
 	: Zombie(w, x, y)
 {}
-void SmartZombie::doSomeThing()
+void SmartZombie::doSomething()
 {
 	//to do
 }

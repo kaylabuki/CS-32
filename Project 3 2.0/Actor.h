@@ -5,6 +5,7 @@
 
 class StudentWorld;
 class Goodie;
+class Penelope;
 
 class Actor : public GraphObject
 {
@@ -53,7 +54,7 @@ public:
 
 private:
 	StudentWorld *sw;
-	bool alive;
+	bool dead = false;
 };
 
 class Wall : public Actor
@@ -240,7 +241,7 @@ class DumbZombie : public Zombie
 {
 public:
 	DumbZombie(StudentWorld* w, double x, double y);
-	virtual void doSomeThing();
+	virtual void doSomething();
 	virtual void dieByFallOrBurnIfAppropriate();
 };
 
@@ -249,7 +250,7 @@ class SmartZombie : public Zombie
 {
 public:
 	SmartZombie(StudentWorld* w, double x, double y);
-	virtual void doSomeThing();
+	virtual void doSomething();
 	virtual void dieByFallOrBurnIfAppropriate();
 };
 

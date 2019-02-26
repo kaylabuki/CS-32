@@ -36,6 +36,10 @@ public:
 	// are gone.
 	void recordLevelFinishedIfAllCitizensGone();
 
+	bool levelFinished();
+
+	void resetLevelFinished();
+
 	// For each actor overlapping a, activate a if appropriate.
 	void activateOnAppropriateActors(Actor* a);
 
@@ -55,8 +59,8 @@ public:
 private:
 	list<Actor*> actors;
 	Actor* penelope;
-	int citizens;
-	bool allCtznsGone;
+	int citizens = 0;
+	bool levelDone = false;
 };
 
 #endif // STUDENTWORLD_H_
