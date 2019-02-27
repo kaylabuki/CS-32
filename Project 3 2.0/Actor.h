@@ -198,6 +198,9 @@ public:
 	virtual void dieByFallOrBurnIfAppropriate();
 	virtual void pickUpGoodieIfAppropriate(Goodie* g);
 
+	void decreaseVaccines();
+	void decreaseFlameCharges();
+	void decreaseLandmines();
 	// Increase the number of vaccines the object has.
 	void increaseVaccines();
 

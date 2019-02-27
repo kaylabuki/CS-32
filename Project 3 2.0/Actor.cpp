@@ -127,17 +127,44 @@ Landmine::Landmine(StudentWorld* w, double x, double y)
 	: ActivatingObject(w, IID_LANDMINE, x, y, 1, right)
 {}
 void Landmine::doSomething()
-{/*to do*/}
-void Landmine::activateIfAppropriate(Actor* a)
 {
 	if (isDead())
 		return;
-
+	decSafetyTicks();
+	if (safetyTicks() > 0)
+		return;
+	setDead();
+	world()->playSound(SOUND_LANDMINE_EXPLODE);
+	world()->activateOnAppropriateActors(this);
+	double curX = getX();
+	double curY = getY();
+	Actor* p = new Flame(world(), curX, curY, right);
+	Actor* w = new Flame(world(), curX - SPRITE_WIDTH, curY, right);
+	Actor* e = new Flame(world(), curX + SPRITE_WIDTH, curY, right);
+	Actor* s = new Flame(world(), curX, curY - SPRITE_HEIGHT, right);
+	Actor* n = new Flame(world(), curX, curY + SPRITE_HEIGHT, right);
+	Actor* nw = new Flame(world(), curX - SPRITE_WIDTH, curY + SPRITE_HEIGHT, right);
+	Actor* ne = new Flame(world(), curX + SPRITE_WIDTH, curY + SPRITE_HEIGHT, right);
+	Actor* sw = new Flame(world(), curX - SPRITE_WIDTH, curY - SPRITE_HEIGHT, right);
+	Actor* se = new Flame(world(), curX + SPRITE_WIDTH, curY - SPRITE_HEIGHT, right);
+	world()->addActor(p);
+	world()->addActor(w);
+	world()->addActor(e);
+	world()->addActor(s);
+	world()->addActor(n);
+	world()->addActor(nw);
+	world()->addActor(ne);
+	world()->addActor(sw);
+	world()->addActor(se);
+}
+void Landmine::activateIfAppropriate(Actor* a)
+{
+	a->dieByFallOrBurnIfAppropriate();
 }
 void Landmine::dieByFallOrBurnIfAppropriate()
 {
-	// When another flame overlaps with a landmine it will trigger the landmine 
-	// and cause it to introduce flames all around the landmine.
+	while (safetyTicks() != 0)
+		decSafetyTicks();
 }
 int Landmine::safetyTicks() { return sftyTcks; }
 void Landmine::decSafetyTicks() { sftyTcks--; }
@@ -318,6 +345,15 @@ void Penelope::doSomething()
 				moveTo(curX, curY - 4);
 			break;
 		}
+		case KEY_PRESS_TAB:
+		{
+			if (getNumLandmines() > 0)
+			{
+				decreaseLandmines();
+				Actor* landmine  = new Landmine(world(), getX(), getY());
+				world()->addActor(landmine);
+			}
+		}
 		}
 	}
 }
@@ -339,6 +375,9 @@ void Penelope::pickUpGoodieIfAppropriate(Goodie* g)
 void Penelope::increaseVaccines() { vaccines++; }
 void Penelope::increaseFlameCharges() { flameCharges++; }
 void Penelope::increaseLandmines() { landmines++; }
+void Penelope::decreaseVaccines() { vaccines--; }
+void Penelope::decreaseFlameCharges() { flameCharges--; }
+void Penelope::decreaseLandmines() { landmines--; }
 int Penelope::getNumVaccines() const { return vaccines; }
 int Penelope::getNumFlameCharges() const { return flameCharges; }
 int Penelope::getNumLandmines() const { return landmines; }
@@ -393,22 +432,34 @@ void DumbZombie::doSomething()
 	case left:
 	{
 		if (world()->isZombieVomitTargetAt(curX - SPRITE_WIDTH, curY))
-			new Vomit(world(), curX - SPRITE_WIDTH, curY);
+		{
+			Actor* vomit = new Vomit(world(), curX - SPRITE_WIDTH, curY);
+			world()->addActor(vomit);
+		}
 	}
 	case right:
 	{
 		if (world()->isZombieVomitTargetAt(curX + SPRITE_WIDTH, curY))
-			new Vomit(world(), curX + SPRITE_WIDTH, curY);
+		{
+			Actor* vomit = new Vomit(world(), curX + SPRITE_WIDTH, curY);
+			world()->addActor(vomit);
+		}
 	}
 	case up:
 	{
 		if (world()->isZombieVomitTargetAt(curX, curY + SPRITE_HEIGHT))
-			new Vomit(world(), curX, curY + SPRITE_HEIGHT);
+		{
+			Actor* vomit = new Vomit(world(), curX, curY + SPRITE_HEIGHT);
+			world()->addActor(vomit);
+		}
 	}
 	case down:
 	{
 		if (world()->isZombieVomitTargetAt(curX, curY - SPRITE_HEIGHT))
-			new Vomit(world(), curX, curY - SPRITE_HEIGHT);
+		{
+			Actor* vomit = new Vomit(world(), curX, curY - SPRITE_HEIGHT);
+			world()->addActor(vomit);
+		}
 	}
 	}
 
