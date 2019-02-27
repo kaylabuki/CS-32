@@ -130,6 +130,7 @@ int StudentWorld::move()
 		// Check if penelope died during this tick
 		if (penelope->isDead())
 			return GWSTATUS_PLAYER_DIED;
+		// Check if the level is finished
 		if (levelFinished())
 			return GWSTATUS_FINISHED_LEVEL;
 
@@ -144,7 +145,7 @@ int StudentWorld::move()
 		if ((*it)->isDead())
 		{
 			delete *it;
-			actors.pop_front();
+			actors.erase(it);
 		}
 		it++;
 	}
@@ -159,7 +160,6 @@ void StudentWorld::cleanUp()
 	while (it != actors.end())
 	{
 		delete *it;
-		//actors.pop_front();
 		it++;
 	}
 	actors.clear();

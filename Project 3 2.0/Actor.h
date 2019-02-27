@@ -70,6 +70,10 @@ class ActivatingObject : public Actor
 {
 public:
 	ActivatingObject(StudentWorld* w, int imageID, double x, double y, int depth, int dir);
+	int ticks();
+	void incTicks();
+private:
+	int ticksSinceCreation;
 };
 
 class Exit : public ActivatingObject
@@ -95,10 +99,6 @@ public:
 	Flame(StudentWorld* w, double x, double y, int dir);
 	virtual void doSomething();
 	virtual void activateIfAppropriate(Actor* a);
-	int ticks();
-	void incTicks();
-private:
-	int ticksSinceCreation;
 };
 
 class Vomit : public ActivatingObject
@@ -173,11 +173,13 @@ public:
 	// Make this human uninfected by vomit.
 	void clearInfection();
 
-	// How many ticks since this human was infected by vomit?
-	int getInfectionDuration() const;
+	int infectionTime();
 
 	// Infects this human.
 	void infect();
+
+	// Is this human infected?
+	bool isInfected();
 
 	// Increments the amount of ticks since this human was infected by vomit.
 	void incInfectionDuration();

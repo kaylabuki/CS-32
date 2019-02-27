@@ -34,7 +34,8 @@ bool Wall::blocksFlame() const { return true; }
 ActivatingObject::ActivatingObject(StudentWorld* w, int imageID, double x, double y, int depth, int dir)
 	: Actor(w, imageID, x, y, dir, depth)
 {}
-
+int ActivatingObject::ticks() { return ticksSinceCreation; }
+void ActivatingObject::incTicks() { ticksSinceCreation++; }
 //_______________________________________________________________________________________//
 
 // EXIT Implementations
@@ -91,8 +92,6 @@ void Flame::activateIfAppropriate(Actor* a)
 {
 	a->dieByFallOrBurnIfAppropriate();
 }
-int Flame::ticks() { return ticksSinceCreation; }
-void Flame::incTicks() { ticksSinceCreation++; }
 
 //_______________________________________________________________________________________//
 
@@ -101,9 +100,25 @@ Vomit::Vomit(StudentWorld* w, double x, double y)
 	: ActivatingObject(w, IID_VOMIT, x, y, 0, right)
 {}
 void Vomit::doSomething()
-{/*to do*/}
+{
+	if (isDead())
+		return;
+	else
+	{
+		incTicks();
+		if (ticks() == 2)
+		{
+			setDead();
+			return;
+		}
+		world()->activateOnAppropriateActors(this);
+	}
+
+}
 void Vomit::activateIfAppropriate(Actor* a)
-{/*to do*/}
+{
+	a->beVomitedOnIfAppropriate();
+}
 
 //_______________________________________________________________________________________//
 
@@ -114,7 +129,11 @@ Landmine::Landmine(StudentWorld* w, double x, double y)
 void Landmine::doSomething()
 {/*to do*/}
 void Landmine::activateIfAppropriate(Actor* a)
-{/*to do*/}
+{
+	if (isDead())
+		return;
+
+}
 void Landmine::dieByFallOrBurnIfAppropriate()
 {
 	// When another flame overlaps with a landmine it will trigger the landmine 
@@ -122,7 +141,6 @@ void Landmine::dieByFallOrBurnIfAppropriate()
 }
 int Landmine::safetyTicks() { return sftyTcks; }
 void Landmine::decSafetyTicks() { sftyTcks--; }
-
 //_______________________________________________________________________________________//
 
 // GOODIE Implementations
@@ -150,12 +168,15 @@ void VaccineGoodie::doSomething()
 		return;
 	else
 	{
-		//to do
+		world()->activateOnAppropriateActors(this);
 	}
 }
 void VaccineGoodie::pickUp(Penelope* p)
 {
-	//to do
+	world()->increaseScore(50);
+	setDead();
+	world()->playSound(SOUND_GOT_GOODIE);
+	p->increaseVaccines();
 }
 
 //_______________________________________________________________________________________//
@@ -170,12 +191,16 @@ void GasCanGoodie::doSomething()
 		return;
 	else
 	{
-		//to do
+		world()->activateOnAppropriateActors(this);
 	}
 }
 void GasCanGoodie::pickUp(Penelope* p)
 {
-	// to do
+	world()->increaseScore(50);
+	setDead();
+	world()->playSound(SOUND_GOT_GOODIE);
+	for(int i = 0; i < 5; i++)
+		p->increaseFlameCharges();
 }
 
 //_______________________________________________________________________________________//
@@ -190,12 +215,16 @@ void LandmineGoodie::doSomething()
 		return;
 	else
 	{
-		//to do
+		world()->activateOnAppropriateActors(this);
 	}
 }
 void LandmineGoodie::pickUp(Penelope* p)
 {
-	//to do
+	world()->increaseScore(50);
+	setDead();
+	world()->playSound(SOUND_GOT_GOODIE);
+	p->increaseLandmines();
+	p->increaseLandmines();
 }
 
 //_______________________________________________________________________________________//
@@ -215,13 +244,18 @@ Human::Human(StudentWorld* w, int imageID, double x, double y)
 {}
 void Human::beVomitedOnIfAppropriate()
 {
-	//to do 
+	infect();
+	world()->playSound(SOUND_CITIZEN_INFECTED);
 }
 bool Human::triggersZombieVomit() const { return true; }
 void Human::clearInfection() { infected = false; }
-int Human::getInfectionDuration() const { return infectionDuration; }
 void Human::infect() { infected = true; }
-void Human::incInfectionDuration() { infectionDuration++; }
+bool Human::isInfected() { return infected; }
+int Human::infectionTime() { return infectionDuration; }
+void Human::incInfectionDuration() 
+{ 
+	infectionDuration++; 
+}
 
 //_______________________________________________________________________________________//
 
@@ -231,6 +265,16 @@ Penelope::Penelope(StudentWorld* w, double x, double y)
 {}
 void Penelope::doSomething()
 {
+	if (isInfected())
+		incInfectionDuration();
+	if (infectionTime() == 500)
+	{
+		setDead();
+		world()->playSound(SOUND_PLAYER_DIE);
+	}
+
+	//to do
+
 	int ch;
 	double curX = getX();
 	double curY = getY();
@@ -282,7 +326,6 @@ void Penelope::useExitIfAppropriate()
 	if (world()->numCitizens() == 0)
 	{
 		world()->recordLevelFinishedIfAllCitizensGone();
-		//figure out how to inform studentWorld object that penelope has finished the current level
 	}
 }
 void Penelope::dieByFallOrBurnIfAppropriate()
@@ -291,7 +334,7 @@ void Penelope::dieByFallOrBurnIfAppropriate()
 }
 void Penelope::pickUpGoodieIfAppropriate(Goodie* g)
 {
-	//to do
+	g->pickUp(this);
 }
 void Penelope::increaseVaccines() { vaccines++; }
 void Penelope::increaseFlameCharges() { flameCharges++; }
@@ -342,7 +385,34 @@ DumbZombie::DumbZombie(StudentWorld* w, double x, double y)
 {}
 void DumbZombie::doSomething()
 {
-	//to do
+	int dir = getDirection();
+	double curX = getX();
+	double curY = getY();
+	switch (dir)
+	{
+	case left:
+	{
+		if (world()->isZombieVomitTargetAt(curX - SPRITE_WIDTH, curY))
+			new Vomit(world(), curX - SPRITE_WIDTH, curY);
+	}
+	case right:
+	{
+		if (world()->isZombieVomitTargetAt(curX + SPRITE_WIDTH, curY))
+			new Vomit(world(), curX + SPRITE_WIDTH, curY);
+	}
+	case up:
+	{
+		if (world()->isZombieVomitTargetAt(curX, curY + SPRITE_HEIGHT))
+			new Vomit(world(), curX, curY + SPRITE_HEIGHT);
+	}
+	case down:
+	{
+		if (world()->isZombieVomitTargetAt(curX, curY - SPRITE_HEIGHT))
+			new Vomit(world(), curX, curY - SPRITE_HEIGHT);
+	}
+	}
+
+	// TO DO
 }
 void DumbZombie::dieByFallOrBurnIfAppropriate()
 {
