@@ -19,6 +19,8 @@ public:
 	virtual int move();
 	virtual void cleanUp();
 
+	Penelope* getPen();
+
 	// Add an actor to the world.
 	void addActor(Actor* a);
 

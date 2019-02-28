@@ -52,6 +52,12 @@ public:
 	// Does this object trigger landmines only when they're active?
 	virtual bool triggersOnlyActiveLandmines() const;
 
+	// Is this object a threat to citizens?
+	virtual bool threatensCitizens() const;
+
+	// Does this object trigger citizens to follow it or flee it?
+	virtual bool triggersCitizens() const;
+
 private:
 	StudentWorld *sw;
 	bool dead = false;
@@ -161,6 +167,10 @@ public:
 	Agent(StudentWorld* w, int imageID, double x, double y, int dir);
 	virtual bool blocksMovement() const;
 	virtual bool triggersOnlyActiveLandmines() const;
+	int ticks();
+	void incTicks();
+private:
+	int ticksSinceCreation = 0;
 };
 
 class Human : public Agent
@@ -197,7 +207,7 @@ public:
 	virtual void useExitIfAppropriate();
 	virtual void dieByFallOrBurnIfAppropriate();
 	virtual void pickUpGoodieIfAppropriate(Goodie* g);
-
+	virtual bool triggersCitizens() const;
 	void decreaseVaccines();
 	void decreaseFlameCharges();
 	void decreaseLandmines();
@@ -239,6 +249,13 @@ class Zombie : public Agent
 {
 public:
 	Zombie(StudentWorld* w, double x, double y);
+	void attemptVomit();
+	int movementPlan();
+	void setMovementPlan(int newMovementPlan);
+	virtual bool triggersCitizens() const;
+	virtual bool threatensCitizens() const;
+private:
+	int movementPlanDist = 0;
 };
 
 
@@ -248,13 +265,6 @@ public:
 	DumbZombie(StudentWorld* w, double x, double y);
 	virtual void doSomething();
 	virtual void dieByFallOrBurnIfAppropriate();
-	int ticks();
-	void incTicks();
-	int movementPlan();
-	void setMovementPlan(int newMovementPlan);
-private:
-	int ticksSinceCreation = 0;
-	int movementPlanDist = 0;
 };
 
 

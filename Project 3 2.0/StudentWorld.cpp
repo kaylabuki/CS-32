@@ -4,6 +4,7 @@
 #include "Actor.h"
 #include <string>
 #include <cstdlib>
+#include <cmath>
 #include <sstream>
 #include <iomanip>
 using namespace std;
@@ -33,7 +34,7 @@ int StudentWorld::init()
 	//creates stringstream text file name using getLevel()
 	ostringstream levelFile;
 	levelFile.fill('0');
-	levelFile << "level" << setw(2) << getLevel() + 1 << ".txt";
+	levelFile << "level" << setw(2) << getLevel() + 3 << ".txt"; //CHANGE LATER
 	//Iterates through level file to find locations of Penelope and the walls
 	Level::LoadResult result = lev.loadLevel(levelFile.str());
 	Level::MazeEntry ge;
@@ -165,6 +166,11 @@ void StudentWorld::cleanUp()
 	delete penelope;
 }
 
+Penelope* StudentWorld::getPen()
+{
+	return penelope;
+}
+
 void StudentWorld::addActor(Actor* a)
 {
 	actors.push_back(a);
@@ -198,6 +204,110 @@ bool StudentWorld::levelFinished()
 void StudentWorld::resetLevelFinished()
 {
 	levelDone = false;
+}
+
+// Return true if there is a living zombie or Penelope, otherwise false.
+	// If true, otherX, otherY, and distance will be set to the location and
+	// distance of the one nearest to (x,y), and isThreat will be set to true
+	// if it's a zombie, false if a Penelope.
+bool StudentWorld::locateNearestCitizenTrigger(double x, double y, double& otherX, double& otherY, double& distance, bool& isThreat) const
+{
+	double minDis = sqrt((256 * 256) + (256 * 256));
+	if (!(penelope->isDead()))
+	{
+		double deltaX = penelope->getX() - x;
+		double deltaY = penelope->getY() - y;
+		double minDis = sqrt((deltaX*deltaX) + (deltaY*deltaY));
+	}
+	list<Actor*>::const_iterator it = actors.begin();
+	while (it != actors.end())
+	{
+		if ((*it)->triggersCitizens())
+		{
+			double newDeltaX = (*it)->getX() - x;
+			double newDeltaY = (*it)->getY() - y;
+			double newDis = sqrt((newDeltaX*newDeltaX) + (newDeltaY*newDeltaY));
+			if (newDis < minDis)
+			{
+				minDis = newDis;
+				otherX = (*it)->getX();
+				otherY = (*it)->getY();
+				distance = minDis;
+				isThreat = (*it)->threatensCitizens();
+			}
+		}
+		it++;
+	}
+	if (minDis == sqrt((256 * 256) + (256 * 256)))
+		return false;
+	else
+		return true;
+}
+
+// Return true if there is a living zombie, false otherwise.  If true,
+	// otherX, otherY and distance will be set to the location and distance
+	// of the one nearest to (x,y).
+bool StudentWorld::locateNearestCitizenThreat(double x, double y, double& otherX, double& otherY, double& distance) const
+{
+	double minDis = sqrt((256 * 256) + (256 * 256));
+	double deltaX = 256;
+	double deltaY = 256;
+
+	list<Actor*>::const_iterator it = actors.begin();
+	while (it != actors.end())
+	{
+		if ((*it)->threatensCitizens())
+		{
+			double newDeltaX = (*it)->getX() - x;
+			double newDeltaY = (*it)->getY() - y;
+			double newDis = sqrt((newDeltaX*newDeltaX) + (newDeltaY*newDeltaY));
+			if (newDis < minDis)
+			{
+				minDis = newDis;
+				otherX = (*it)->getX();
+				otherY = (*it)->getY();
+				distance = minDis;
+			}
+		}
+		it++;
+	}
+	if (minDis == sqrt((256 * 256) + (256 * 256)))
+		return false;
+	else
+		return true;
+}
+
+bool StudentWorld::locateNearestVomitTrigger(double x, double y, double& otherX, double& otherY, double& distance)
+{
+	double minDis = sqrt((256 * 256) + (256 * 256));
+	if (!(penelope->isDead()))
+	{
+		double deltaX = penelope->getX() - x;
+		double deltaY = penelope->getY() - y;
+		double minDis = sqrt((deltaX*deltaX) + (deltaY*deltaY));
+	}
+	list<Actor*>::const_iterator it = actors.begin();
+	while (it != actors.end())
+	{
+		if ((*it)->triggersZombieVomit())
+		{
+			double newDeltaX = (*it)->getX() - x;
+			double newDeltaY = (*it)->getY() - y;
+			double newDis = sqrt((newDeltaX*newDeltaX) + (newDeltaY*newDeltaY));
+			if (newDis < minDis)
+			{
+				minDis = newDis;
+				otherX = (*it)->getX();
+				otherY = (*it)->getY();
+				distance = minDis;
+			}
+		}
+		it++;
+	}
+	if (minDis == sqrt((256 * 256) + (256 * 256)))
+		return false;
+	else
+		return true;
 }
 
 void StudentWorld::activateOnAppropriateActors(Actor* a)
