@@ -279,7 +279,11 @@ void Human::beVomitedOnIfAppropriate()
 	world()->playSound(SOUND_CITIZEN_INFECTED);
 }
 bool Human::triggersZombieVomit() const { return true; }
-void Human::clearInfection() { infected = false; }
+void Human::clearInfection() 
+{ 
+	infected = false;
+	infectionDuration = 0;
+}
 void Human::infect() { infected = true; }
 bool Human::isInfected() { return infected; }
 int Human::infectionTime() { return infectionDuration; }
@@ -349,13 +353,70 @@ void Penelope::doSomething()
 				moveTo(curX, curY - 4);
 			break;
 		}
+		case KEY_PRESS_SPACE:
+		{
+			if (getNumFlameCharges() > 0)
+			{
+				decreaseFlameCharges();
+				world()->playSound(SOUND_PLAYER_FIRE);
+				for (int i = 1; i < 4; i++)
+				{
+					double flameX = getX();
+					double flameY = getY();
+					int dir = getDirection();
+					switch (dir)
+					{
+					case up:
+					{
+						flameY += (i * SPRITE_HEIGHT);
+						break;
+					}
+					case down:
+					{
+						flameY -= (i * SPRITE_HEIGHT);
+						break;
+					}
+					case left:
+					{
+						flameX -= (i * SPRITE_WIDTH);
+						break;
+					}
+					case right:
+					{
+						flameX += (i * SPRITE_WIDTH);
+						break;
+					}
+					}
+
+					if (world()->isFlameBlockedAt(flameX, flameY))
+					{
+						break;
+					}
+					else
+					{
+						Actor* flame = new Flame(world(), flameX, flameY, dir);
+						world()->addActor(flame);
+					}
+				}
+			}
+			break;
+		}
 		case KEY_PRESS_TAB:
 		{
 			if (getNumLandmines() > 0)
 			{
 				decreaseLandmines();
-				Actor* landmine  = new Landmine(world(), getX(), getY());
+				Actor* landmine = new Landmine(world(), getX(), getY());
 				world()->addActor(landmine);
+			}
+			break;
+		}
+		case KEY_PRESS_ENTER:
+		{
+			if (getNumVaccines() > 0)
+			{
+				decreaseVaccines();
+				clearInfection();
 			}
 		}
 		}
@@ -363,6 +424,7 @@ void Penelope::doSomething()
 }
 void Penelope::useExitIfAppropriate()
 {
+	cout << "Num citizens: " << world()->numCitizens() << endl;
 	if (world()->numCitizens() == 0)
 	{
 		world()->recordLevelFinishedIfAllCitizensGone();
@@ -456,6 +518,7 @@ void Citizen::doSomething()
 	if (infectionTime() >= 500)
 	{
 		setDead();
+		world()->recordCitizenGone();
 		world()->playSound(SOUND_ZOMBIE_BORN);
 		world()->increaseScore(-1000);
 		int zombieChance = randInt(1, 10);
