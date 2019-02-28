@@ -79,8 +79,8 @@ public:
 private:
 	list<Actor*> actors;
 	Penelope* penelope;
-	int citizens = 0;
-	bool levelDone = false;
+	int citizens;
+	bool levelDone;
 };
 
 #endif // STUDENTWORLD_H_
