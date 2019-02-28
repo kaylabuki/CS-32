@@ -33,7 +33,7 @@ int StudentWorld::init()
 	//creates stringstream text file name using getLevel()
 	ostringstream levelFile;
 	levelFile.fill('0');
-	levelFile << "level" << setw(2) << getLevel() << ".txt";
+	levelFile << "level" << setw(2) << getLevel() + 1 << ".txt";
 	//Iterates through level file to find locations of Penelope and the walls
 	Level::LoadResult result = lev.loadLevel(levelFile.str());
 	Level::MazeEntry ge;
@@ -133,7 +133,6 @@ int StudentWorld::move()
 		// Check if the level is finished
 		if (levelFinished())
 			return GWSTATUS_FINISHED_LEVEL;
-
 		// Increment iterator
 		it++;
 	}
@@ -145,12 +144,12 @@ int StudentWorld::move()
 		if ((*it)->isDead())
 		{
 			delete *it;
-			actors.erase(it);
+			it = actors.erase(it);
+			it--;
 		}
 		it++;
 	}
-	//	// Update the game status line
-	//	Update Display Text // update the score/lives/level text at screen top
+	setGameStatText(getGameStatText());
 	return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -221,12 +220,12 @@ void StudentWorld::activateOnAppropriateActors(Actor* a)
 		a->activateIfAppropriate(penelope);
 }
 
-bool StudentWorld::isAgentMovementBlockedAt(double x, double y) const
+bool StudentWorld::isAgentMovementBlockedAt(double x, double y, Actor* a) const
 {
 	list<Actor*>::const_iterator it = actors.begin();
 	while (it != actors.end())
 	{
-		if ((*it)->blocksMovement())
+		if ((*it)->blocksMovement() && (*it) != a)
 		{
 			if (abs((*it)->getY() - y) < SPRITE_HEIGHT && abs((*it)->getX() - x) < SPRITE_WIDTH)
 			{
@@ -268,4 +267,20 @@ bool StudentWorld::isZombieVomitTargetAt(double x, double y) const
 		it++;
 	}
 	return false;
+}
+
+string StudentWorld::getGameStatText()
+{
+	ostringstream statText;
+	ostringstream scoreNum;
+	scoreNum.fill('0');
+	scoreNum << setw(6) << getScore();
+	statText << "Score: " << scoreNum.str() << "  ";
+	statText << "Level: " << getLevel() << "  ";
+	statText << "Lives: " << getLives() << "  ";
+	statText << "Vaccines: " << penelope->getNumVaccines() << "  ";
+	statText << "Flame: " << penelope->getNumFlameCharges() << "  ";
+	statText << "Mines: " << penelope->getNumLandmines() << "  ";
+	statText << "Infected: " << penelope->infectionTime();
+	return statText.str();
 }

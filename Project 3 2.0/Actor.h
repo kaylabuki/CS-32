@@ -184,8 +184,8 @@ public:
 	// Increments the amount of ticks since this human was infected by vomit.
 	void incInfectionDuration();
 private:
-	bool infected;
-	int infectionDuration;
+	bool infected = false;
+	int infectionDuration = 0;
 };
 
 
@@ -219,9 +219,9 @@ public:
 	// How many landmines does the object have?
 	int getNumLandmines() const;
 private:
-	int vaccines;
-	int flameCharges;
-	int landmines;
+	int vaccines = 0;
+	int flameCharges = 0;
+	int landmines = 0;
 };
 
 
@@ -248,6 +248,13 @@ public:
 	DumbZombie(StudentWorld* w, double x, double y);
 	virtual void doSomething();
 	virtual void dieByFallOrBurnIfAppropriate();
+	int ticks();
+	void incTicks();
+	int movementPlan();
+	void setMovementPlan(int newMovementPlan);
+private:
+	int ticksSinceCreation = 0;
+	int movementPlanDist = 0;
 };
 
 

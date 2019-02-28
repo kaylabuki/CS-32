@@ -201,9 +201,9 @@ void VaccineGoodie::doSomething()
 void VaccineGoodie::pickUp(Penelope* p)
 {
 	world()->increaseScore(50);
-	setDead();
 	world()->playSound(SOUND_GOT_GOODIE);
 	p->increaseVaccines();
+	setDead();
 }
 
 //_______________________________________________________________________________________//
@@ -217,17 +217,15 @@ void GasCanGoodie::doSomething()
 	if (isDead())
 		return;
 	else
-	{
 		world()->activateOnAppropriateActors(this);
-	}
 }
 void GasCanGoodie::pickUp(Penelope* p)
 {
 	world()->increaseScore(50);
-	setDead();
 	world()->playSound(SOUND_GOT_GOODIE);
 	for(int i = 0; i < 5; i++)
 		p->increaseFlameCharges();
+	setDead();
 }
 
 //_______________________________________________________________________________________//
@@ -248,10 +246,10 @@ void LandmineGoodie::doSomething()
 void LandmineGoodie::pickUp(Penelope* p)
 {
 	world()->increaseScore(50);
-	setDead();
 	world()->playSound(SOUND_GOT_GOODIE);
 	p->increaseLandmines();
 	p->increaseLandmines();
+	setDead();
 }
 
 //_______________________________________________________________________________________//
@@ -312,7 +310,7 @@ void Penelope::doSomething()
 		case KEY_PRESS_LEFT:
 		{
 			setDirection(left);
-			if (world()->isAgentMovementBlockedAt(curX - 4, curY))
+			if (world()->isAgentMovementBlockedAt(curX - 4, curY, this))
 				break;
 			else
 				moveTo(curX - 4, curY);
@@ -321,7 +319,7 @@ void Penelope::doSomething()
 		case KEY_PRESS_RIGHT:
 		{
 			setDirection(right);
-			if (world()->isAgentMovementBlockedAt(curX + 4, curY))
+			if (world()->isAgentMovementBlockedAt(curX + 4, curY, this))
 				break;
 			else
 				moveTo(curX + 4, curY);
@@ -330,7 +328,7 @@ void Penelope::doSomething()
 		case KEY_PRESS_UP:
 		{
 			setDirection(up);
-			if (world()->isAgentMovementBlockedAt(curX, curY + 4))
+			if (world()->isAgentMovementBlockedAt(curX, curY + 4, this))
 				break;
 			else
 				moveTo(curX, curY + 4);
@@ -339,7 +337,7 @@ void Penelope::doSomething()
 		case KEY_PRESS_DOWN:
 		{
 			setDirection(down);
-			if (world()->isAgentMovementBlockedAt(curX, curY - 4))
+			if (world()->isAgentMovementBlockedAt(curX, curY - 4, this))
 				break;
 			else
 				moveTo(curX, curY - 4);
@@ -424,52 +422,109 @@ DumbZombie::DumbZombie(StudentWorld* w, double x, double y)
 {}
 void DumbZombie::doSomething()
 {
+	if (isDead())
+		return;
+	incTicks();
+	if (ticks() % 2 == 0)
+		return;
+
 	int dir = getDirection();
 	double curX = getX();
 	double curY = getY();
+	double vomitX = curX;
+	double vomitY = curY;
 	switch (dir)
 	{
-	case left:
-	{
-		if (world()->isZombieVomitTargetAt(curX - SPRITE_WIDTH, curY))
+		case left:
 		{
-			Actor* vomit = new Vomit(world(), curX - SPRITE_WIDTH, curY);
-			world()->addActor(vomit);
+			vomitX -= SPRITE_WIDTH;
+			break;
 		}
-	}
-	case right:
-	{
-		if (world()->isZombieVomitTargetAt(curX + SPRITE_WIDTH, curY))
+		case right:
 		{
-			Actor* vomit = new Vomit(world(), curX + SPRITE_WIDTH, curY);
-			world()->addActor(vomit);
+			vomitX += SPRITE_WIDTH;
+			break;
 		}
-	}
-	case up:
-	{
-		if (world()->isZombieVomitTargetAt(curX, curY + SPRITE_HEIGHT))
+		case up:
 		{
-			Actor* vomit = new Vomit(world(), curX, curY + SPRITE_HEIGHT);
-			world()->addActor(vomit);
+			vomitY += SPRITE_HEIGHT;
+			break;
 		}
-	}
-	case down:
-	{
-		if (world()->isZombieVomitTargetAt(curX, curY - SPRITE_HEIGHT))
+		case down:
 		{
-			Actor* vomit = new Vomit(world(), curX, curY - SPRITE_HEIGHT);
-			world()->addActor(vomit);
-		}
+			vomitY -= SPRITE_HEIGHT;
+			break;
+		}	
 	}
+	
+	int vomitRand = randInt(1, 3);
+	if (world()->isZombieVomitTargetAt(vomitX, vomitY) && vomitRand == 1)
+	{
+		Actor* vomit = new Vomit(world(), vomitX, vomitY);
+		world()->addActor(vomit);
+		world()->playSound(SOUND_ZOMBIE_VOMIT);
+		return;
 	}
 
-	// TO DO
+	double dest_X = getX();
+	double dest_Y = getY();
+	int newDir = getDirection();
+
+	if (movementPlan() == 0)
+	{
+		int newMovementPlan = randInt(3, 10);
+		setMovementPlan(newMovementPlan);
+		newDir = randInt(1, 4);
+	}
+	
+	switch (newDir) {
+		case 1:
+		case left:
+		{
+			setDirection(left);
+			dest_X--;
+			break;
+		}
+		case 2:
+		case right:
+		{
+			setDirection(right);
+			dest_X++;
+			break;
+		}
+		case 3:
+		case up:
+		{
+			setDirection(up);
+			dest_Y++;
+			break;
+		}
+		case 4:
+		case down:
+		{
+			setDirection(down);
+			dest_Y--;
+			break;
+		}
+	}
+
+	if (!(world()->isAgentMovementBlockedAt(dest_X, dest_Y, this)))
+		moveTo(dest_X, dest_Y);
+	else
+		setMovementPlan(0);
 }
+
+	
 void DumbZombie::dieByFallOrBurnIfAppropriate()
 {
 	setDead();
 	world()->increaseScore(1000);
 }
+
+int DumbZombie::ticks() { return ticksSinceCreation; }
+void DumbZombie::incTicks() { ticksSinceCreation++; }
+int DumbZombie::movementPlan() { return movementPlanDist; }
+void DumbZombie::setMovementPlan(int newMovementPlan) { movementPlanDist = newMovementPlan; }
 
 //_______________________________________________________________________________________//
 

@@ -44,7 +44,7 @@ public:
 	void activateOnAppropriateActors(Actor* a);
 
 	// Is an agent blocked from moving to the indicated location?
-	bool isAgentMovementBlockedAt(double x, double y) const;
+	bool isAgentMovementBlockedAt(double x, double y, Actor* a) const;
 
 	// Is creation of a flame blocked at the indicated location?
 	bool isFlameBlockedAt(double x, double y) const;
@@ -53,12 +53,30 @@ public:
 	// zombie to vomit?
 	bool isZombieVomitTargetAt(double x, double y) const;
 
+	// Return true if there is a living human, otherwise false.  If true,
+	 // otherX, otherY, and distance will be set to the location and distance
+	 // of the human nearest to (x,y).
+	bool locateNearestVomitTrigger(double x, double y, double& otherX, double& otherY, double& distance);
+
+	// Return true if there is a living zombie or Penelope, otherwise false.
+	// If true, otherX, otherY, and distance will be set to the location and
+	// distance of the one nearest to (x,y), and isThreat will be set to true
+	// if it's a zombie, false if a Penelope.
+	bool locateNearestCitizenTrigger(double x, double y, double& otherX, double& otherY, double& distance, bool& isThreat) const;
+
+	// Return true if there is a living zombie, false otherwise.  If true,
+	// otherX, otherY and distance will be set to the location and distance
+	// of the one nearest to (x,y).
+	bool locateNearestCitizenThreat(double x, double y, double& otherX, double& otherY, double& distance) const;
+
+	string getGameStatText();
+
 	// ********* One or two more functions will appear here shortly relating
 	// ********* to finding the nearest relevant agent for citizen/smart zombie movement
 
 private:
 	list<Actor*> actors;
-	Actor* penelope;
+	Penelope* penelope;
 	int citizens = 0;
 	bool levelDone = false;
 };
