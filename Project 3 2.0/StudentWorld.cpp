@@ -36,7 +36,7 @@ int StudentWorld::init()
 	//creates stringstream text file name using getLevel()
 	ostringstream levelFile;
 	levelFile.fill('0');
-	levelFile << "level" << setw(2) << getLevel() + 2 << ".txt"; //CHANGE LATER
+	levelFile << "level" << setw(2) << getLevel() << ".txt"; //CHANGE LATER
 	//Iterates through level file to find locations of Penelope and the walls
 	Level::LoadResult result = lev.loadLevel(levelFile.str());
 	Level::MazeEntry ge;
@@ -119,6 +119,14 @@ int StudentWorld::init()
 		cout << endl;
 		return GWSTATUS_CONTINUE_GAME;
 	}
+	else if (result == Level::load_fail_bad_format)
+	{
+		return GWSTATUS_LEVEL_ERROR;
+	}
+	else
+	{
+		return GWSTATUS_PLAYER_WON;
+	}
 }
 
 int StudentWorld::move()
@@ -159,6 +167,7 @@ int StudentWorld::move()
 
 void StudentWorld::cleanUp()
 {
+	delete penelope;
 	list<Actor*>::iterator it = actors.begin();
 	while (it != actors.end())
 	{
@@ -166,7 +175,6 @@ void StudentWorld::cleanUp()
 		it++;
 	}
 	actors.clear();
-	delete penelope;
 }
 
 Penelope* StudentWorld::getPen()

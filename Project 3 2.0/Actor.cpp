@@ -438,6 +438,7 @@ void Penelope::useExitIfAppropriate()
 	if (world()->numCitizens() == 0)
 	{
 		world()->recordLevelFinishedIfAllCitizensGone();
+		world()->playSound(SOUND_LEVEL_FINISHED);
 	}
 }
 void Penelope::dieByFallOrBurnIfAppropriate()
