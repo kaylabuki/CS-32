@@ -222,6 +222,8 @@ void StudentWorld::activateOnAppropriateActors(Actor* a)
 
 bool StudentWorld::isAgentMovementBlockedAt(double x, double y, Actor* a) const
 {
+	if (abs(penelope->getX() - x) < SPRITE_WIDTH && abs(penelope->getY() - y) < SPRITE_HEIGHT && a != penelope)
+		return true;
 	list<Actor*>::const_iterator it = actors.begin();
 	while (it != actors.end())
 	{
@@ -248,20 +250,26 @@ bool StudentWorld::isFlameBlockedAt(double x, double y) const
 			double deltaY = (*it)->getY() - y;
 			if (((deltaX*deltaX) + (deltaY*deltaY)) <= 100)
 				return true;
-			it++;
 		}
+		it++;
 	}
 	return false;
 }
 
 bool StudentWorld::isZombieVomitTargetAt(double x, double y) const
 {
+	double deltaPX = penelope->getX() - x;
+	double deltaPY = penelope->getY() - y;
+	if (((deltaPX*deltaPX) + (deltaPY*deltaPY)) <= 100)
+		return true;
 	list<Actor*>::const_iterator it = actors.begin();
 	while (it != actors.end())
 	{
-		if ((*it)->getX() == x && (*it)->getY() == y)
+		if ((*it)->triggersZombieVomit())
 		{
-			if ((*it)->triggersZombieVomit())
+			double deltaX = (*it)->getX() - x;
+			double deltaY = (*it)->getY() - y;
+			if (((deltaX*deltaX) + (deltaY*deltaY)) <= 100)
 				return true;
 		}
 		it++;

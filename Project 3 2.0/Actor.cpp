@@ -458,6 +458,8 @@ void DumbZombie::doSomething()
 	}
 	
 	int vomitRand = randInt(1, 3);
+	/*if (world()->isZombieVomitTargetAt(vomitX, vomitY))
+		cout << "target!" << endl;*/
 	if (world()->isZombieVomitTargetAt(vomitX, vomitY) && vomitRand == 1)
 	{
 		Actor* vomit = new Vomit(world(), vomitX, vomitY);
@@ -509,7 +511,10 @@ void DumbZombie::doSomething()
 	}
 
 	if (!(world()->isAgentMovementBlockedAt(dest_X, dest_Y, this)))
+	{
 		moveTo(dest_X, dest_Y);
+		setMovementPlan(movementPlan() - 1);
+	}
 	else
 		setMovementPlan(0);
 }
