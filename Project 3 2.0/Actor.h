@@ -242,6 +242,7 @@ public:
 	virtual void doSomething();
 	virtual void useExitIfAppropriate();
 	virtual void dieByFallOrBurnIfAppropriate();
+	bool attemptToMove(int dir, int howMuch);
 };
 
 

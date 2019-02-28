@@ -391,6 +391,60 @@ bool Penelope::triggersCitizens() const { return true; }
 Citizen::Citizen(StudentWorld* w, double x, double y)
 	: Human(w, IID_CITIZEN, x, y)
 {}
+bool Citizen::attemptToMove(int dir, int howMuch)
+{
+	switch (dir)
+	{
+	case up:
+	{
+		if (!(world()->isAgentMovementBlockedAt(getX(), getY() + howMuch, this)))
+		{
+			setDirection(dir);
+			moveTo(getX(), getY() + howMuch);
+			return true;
+			break;
+		}
+		return false;
+		break;
+	}
+	case down:
+	{
+		if (!(world()->isAgentMovementBlockedAt(getX(), getY() - howMuch, this)))
+		{
+			setDirection(dir);
+			moveTo(getX(), getY() - howMuch);
+			return true;
+			break;
+		}
+		return false;
+		break;
+	}
+	case right:
+	{
+		if (!(world()->isAgentMovementBlockedAt(getX() + howMuch, getY(), this)))
+		{
+			setDirection(dir);
+			moveTo(getX() + howMuch, getY());
+			return true;
+			break;
+		}
+		return false;
+		break;
+	}
+	case left:
+	{
+		if (!(world()->isAgentMovementBlockedAt(getX() - howMuch, getY(), this)))
+		{
+			setDirection(dir);
+			moveTo(getX() - howMuch, getY());
+			return true;
+			break;
+		}
+		return false;
+		break;
+	}
+	}
+}
 void Citizen::doSomething()
 {
 	if (isDead())
@@ -427,31 +481,108 @@ void Citizen::doSomething()
 	double dist_zY;
 	double dist_z;
 
+	double penX;
+	double penY;
+
+	double curX = getX();
+	double curY = getY();
 
 	double x;
 	double y;
 	double dist;
 	bool isZombie;
-	world()->locateNearestCitizenTrigger(getX(), getY(), x, y, dist, isZombie);
+	world()->locateNearestCitizenTrigger(curX, curY, x, y, dist, isZombie);
 	if (isZombie)
 	{
-		dist_pX = getX() - world()->getPen()->getX();
-		dist_pY = getY() - world()->getPen()->getY();
+		penX = world()->getPen()->getX();
+		penY = world()->getPen()->getY();
+
+		dist_pX = curX - penX;
+		dist_pY = curY - penY;
 		
 		dist_p = sqrt((dist_pX * dist_pX) + (dist_pY * dist_pY));
 		dist_z = dist;
 	}
 	else
 	{
-		world()->locateNearestCitizenThreat(getX(), getY(), x, y, dist);
+		world()->locateNearestCitizenThreat(curX, curY, x, y, dist);
 
-		dist_zX = getX() - x;
-		dist_zY = getY() - y;
+		dist_zX = curX - x;
+		dist_zY = curY - y;
 
 		dist_z = sqrt((dist_zX * dist_zX) + (dist_zY * dist_zY));
 		dist_p = dist;
+
+		penX = x;
+		penY = y;
 	}
 
+	bool blocked = false; 
+
+	if (dist_p < dist_z && dist_p <= 80)
+	{
+		if (curX == world()->getPen()->getX())
+		{
+			if (curX < penX)
+			{
+				if (attemptToMove(right, 2))
+					return;
+			}
+			else
+			{
+				if (attemptToMove(left, 2))
+					return;
+			}
+		}
+		else if (curY == world()->getPen()->getY())
+		{
+			if (curY < penY)
+			{
+				if (attemptToMove(up, 2))
+					return;
+			}
+			else
+			{
+				if (attemptToMove(down, 2))
+					return;
+			}
+		}
+		else
+		{
+			int horzDir;
+			int vertDir;
+
+			if (penX > curX)
+				horzDir = left;
+			else
+				horzDir = right;
+			if (penY > curY)
+				vertDir = up;
+			else
+				vertDir = down;
+
+			int horzOrDir = randInt(1, 2);
+			if (horzOrDir == 1)
+			{
+				if (attemptToMove(horzDir, 2))
+					return;
+				else if (attemptToMove(vertDir, 2))
+					return;
+			}
+			else
+			{
+				if (attemptToMove(vertDir, 2))
+					return;
+				else if (attemptToMove(horzDir, 2))
+					return;
+			}
+		}
+	}
+	if (dist_z <= 80)
+	{
+		int dist_newZ;
+
+	}
 }
 void Citizen::useExitIfAppropriate()
 {
