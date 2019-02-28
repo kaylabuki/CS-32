@@ -471,8 +471,11 @@ void Citizen::doSomething()
 		}
 	}
 
+	incTicks();
 	if (ticks() % 2 == 0)
+	{
 		return;
+	}
 
 	double dist_pX;
 	double dist_pY;
@@ -492,6 +495,7 @@ void Citizen::doSomething()
 	double dist;
 	bool isZombie;
 	world()->locateNearestCitizenTrigger(curX, curY, x, y, dist, isZombie);
+
 	if (isZombie)
 	{
 		penX = world()->getPen()->getX();
@@ -580,8 +584,79 @@ void Citizen::doSomething()
 	}
 	if (dist_z <= 80)
 	{
-		int dist_newZ;
+		//up
+		double dist_newZUp = 0;
+		double newXZUp;
+		double newXYUp;
+		bool upMove = false;
+		if (!world()->isAgentMovementBlockedAt(getX(), getY() + 2, this))
+		{
+			world()->locateNearestCitizenThreat(getX(), getY() + 2, newXZUp, newXYUp, dist_newZUp);
+			upMove = true;
+		}
 
+		//down
+		double dist_newZDown = 0;
+		double newXZDown;
+		double newXYDown;
+		bool downMove = false;
+		if (!world()->isAgentMovementBlockedAt(getX(), getY() - 2, this))
+		{
+			world()->locateNearestCitizenThreat(getX(), getY() - 2, newXZDown, newXYDown, dist_newZDown);
+			downMove = true;
+		}
+
+		//right
+		double dist_newZRight = 0;
+		double newXZRight;
+		double newXYRight;
+		bool rightMove = false;
+		if (!world()->isAgentMovementBlockedAt(getX() + 2, getY(), this))
+		{
+			world()->locateNearestCitizenThreat(getX() + 2, getY(), newXZRight, newXYRight, dist_newZRight);
+			rightMove = true;
+		}
+
+		//left
+		double dist_newZLeft = 0;
+		double newXZLeft;
+		double newXYLeft;
+		bool leftMove = false;
+		if (!world()->isAgentMovementBlockedAt(getX() - 2, getY(), this))
+		{
+			world()->locateNearestCitizenThreat(getX() - 2, getY(), newXZLeft, newXYLeft, dist_newZLeft);
+			leftMove = true;
+		}
+
+		if (!upMove && !downMove && !rightMove && !leftMove)
+			return;
+		else
+		{
+			int minDis = sqrt(256*256 + 256*256);
+			int newDir;
+			if (upMove && dist_newZUp < minDis)
+			{
+				minDis = dist_newZUp;
+				newDir = up;
+			}
+			if (downMove && dist_newZDown < minDis)
+			{
+				minDis = dist_newZDown;
+				newDir = down;
+			}
+			if (rightMove && dist_newZRight < minDis)
+			{
+				minDis = dist_newZRight;
+				newDir = right;
+			}
+			if (leftMove && dist_newZLeft < minDis)
+			{
+				minDis = dist_newZLeft;
+				newDir = left;
+			}
+			attemptToMove(newDir, minDis);
+			return;
+		}
 	}
 }
 void Citizen::useExitIfAppropriate()
