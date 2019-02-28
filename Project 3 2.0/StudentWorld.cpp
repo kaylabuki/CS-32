@@ -392,7 +392,10 @@ string StudentWorld::getGameStatText()
 	ostringstream statText;
 	ostringstream scoreNum;
 	scoreNum.fill('0');
-	scoreNum << setw(6) << getScore();
+	if (getScore() >= 0)
+		scoreNum << setw(6) << getScore();
+	else
+		scoreNum << "-" << setw(5) << (getScore() * -1);
 	statText << "Score: " << scoreNum.str() << "  ";
 	statText << "Level: " << getLevel() << "  ";
 	statText << "Lives: " << getLives() << "  ";

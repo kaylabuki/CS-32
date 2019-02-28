@@ -35,7 +35,9 @@ bool Wall::blocksFlame() const { return true; }
 // ACTIVATING OBJECT Implementations
 ActivatingObject::ActivatingObject(StudentWorld* w, int imageID, double x, double y, int depth, int dir)
 	: Actor(w, imageID, x, y, dir, depth)
-{}
+{
+	ticksSinceCreation = 0;
+}
 int ActivatingObject::ticks() { return ticksSinceCreation; }
 void ActivatingObject::incTicks() { ticksSinceCreation++; }
 //_______________________________________________________________________________________//
@@ -82,7 +84,7 @@ void Flame::doSomething()
 	else
 	{
 		incTicks();
-		if (ticks() == 2)
+		if (ticks() >= 2)
 		{
 			setDead();
 			return;
@@ -108,7 +110,7 @@ void Vomit::doSomething()
 	else
 	{
 		incTicks();
-		if (ticks() == 2)
+		if (ticks() >= 2)
 		{
 			setDead();
 			return;
@@ -451,7 +453,7 @@ void Citizen::doSomething()
 		return;
 	if (isInfected())
 		incInfectionDuration();
-	if (infectionTime() == 500)
+	if (infectionTime() >= 500)
 	{
 		setDead();
 		world()->playSound(SOUND_ZOMBIE_BORN);
@@ -459,13 +461,13 @@ void Citizen::doSomething()
 		int zombieChance = randInt(1, 10);
 		if (zombieChance > 3)
 		{
-			DumbZombie* dz = new DumbZombie(world(), getX(), getY());
+			Actor* dz = new DumbZombie(world(), getX() / 16, getY() / 16);
 			world()->addActor(dz);
 			return;
 		}
 		else
 		{
-			SmartZombie* sz = new SmartZombie(world(), getX(), getY());
+			Actor* sz = new SmartZombie(world(), getX() / 16, getY() / 16);
 			world()->addActor(sz);
 			return;
 		}
@@ -509,23 +511,23 @@ void Citizen::doSomething()
 	}
 	else
 	{
+		dist_p = dist;
+		penX = x;
+		penY = y;
+
 		world()->locateNearestCitizenThreat(curX, curY, x, y, dist);
 
 		dist_zX = curX - x;
 		dist_zY = curY - y;
-
-		dist_z = sqrt((dist_zX * dist_zX) + (dist_zY * dist_zY));
-		dist_p = dist;
-
-		penX = x;
-		penY = y;
+		dist_z = dist;
 	}
 
 	bool blocked = false; 
-
+	
+	// Attempts to follow Penelope
 	if (dist_p < dist_z && dist_p <= 80)
 	{
-		if (curX == world()->getPen()->getX())
+		if (curY == world()->getPen()->getY())
 		{
 			if (curX < penX)
 			{
@@ -538,7 +540,7 @@ void Citizen::doSomething()
 					return;
 			}
 		}
-		else if (curY == world()->getPen()->getY())
+		else if (curX == world()->getPen()->getX())
 		{
 			if (curY < penY)
 			{
@@ -557,16 +559,16 @@ void Citizen::doSomething()
 			int vertDir;
 
 			if (penX > curX)
-				horzDir = left;
-			else
 				horzDir = right;
+			else
+				horzDir = left;
 			if (penY > curY)
 				vertDir = up;
 			else
 				vertDir = down;
 
-			int horzOrDir = randInt(1, 2);
-			if (horzOrDir == 1)
+			int horzOrVert = randInt(1, 2);
+			if (horzOrVert == 1)
 			{
 				if (attemptToMove(horzDir, 2))
 					return;
@@ -637,24 +639,24 @@ void Citizen::doSomething()
 			if (upMove && dist_newZUp < minDis)
 			{
 				minDis = dist_newZUp;
-				newDir = up;
+				newDir = down;
 			}
 			if (downMove && dist_newZDown < minDis)
 			{
 				minDis = dist_newZDown;
-				newDir = down;
+				newDir = up;
 			}
 			if (rightMove && dist_newZRight < minDis)
 			{
 				minDis = dist_newZRight;
-				newDir = right;
+				newDir = left;
 			}
 			if (leftMove && dist_newZLeft < minDis)
 			{
 				minDis = dist_newZLeft;
-				newDir = left;
+				newDir = right;
 			}
-			attemptToMove(newDir, minDis);
+			attemptToMove(newDir, 2);
 			return;
 		}
 	}
@@ -713,8 +715,6 @@ void Zombie::attemptVomit()
 	}
 
 	int vomitRand = randInt(1, 3);
-	/*if (world()->isZombieVomitTargetAt(vomitX, vomitY))
-		cout << "target!" << endl;*/
 	if (world()->isZombieVomitTargetAt(vomitX, vomitY) && vomitRand == 1)
 	{
 		Actor* vomit = new Vomit(world(), vomitX / 16, vomitY / 16);
