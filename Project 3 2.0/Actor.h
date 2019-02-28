@@ -125,7 +125,7 @@ public:
 	int safetyTicks();
 	void decSafetyTicks();
 private:
-	int sftyTcks = 30;
+	int sftyTcks;
 };
 
 class Goodie : public ActivatingObject
@@ -170,7 +170,7 @@ public:
 	int ticks();
 	void incTicks();
 private:
-	int ticksSinceCreation = 0;
+	int ticksSinceCreation;
 };
 
 class Human : public Agent
@@ -194,8 +194,8 @@ public:
 	// Increments the amount of ticks since this human was infected by vomit.
 	void incInfectionDuration();
 private:
-	bool infected = false;
-	int infectionDuration = 0;
+	bool infected;
+	int infectionDuration;
 };
 
 
@@ -229,9 +229,9 @@ public:
 	// How many landmines does the object have?
 	int getNumLandmines() const;
 private:
-	int vaccines = 0;
-	int flameCharges = 0;
-	int landmines = 0;
+	int vaccines;
+	int flameCharges;
+	int landmines;
 };
 
 
@@ -256,7 +256,7 @@ public:
 	virtual bool triggersCitizens() const;
 	virtual bool threatensCitizens() const;
 private:
-	int movementPlanDist = 0;
+	int movementPlanDist;
 };
 
 

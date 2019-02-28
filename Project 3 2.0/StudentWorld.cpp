@@ -36,7 +36,7 @@ int StudentWorld::init()
 	//creates stringstream text file name using getLevel()
 	ostringstream levelFile;
 	levelFile.fill('0');
-	levelFile << "level" << setw(2) << getLevel() + 3 << ".txt"; //CHANGE LATER
+	levelFile << "level" << setw(2) << getLevel() + 2 << ".txt"; //CHANGE LATER
 	//Iterates through level file to find locations of Penelope and the walls
 	Level::LoadResult result = lev.loadLevel(levelFile.str());
 	Level::MazeEntry ge;

@@ -129,7 +129,9 @@ void Vomit::activateIfAppropriate(Actor* a)
 // LANDMINE Implementations
 Landmine::Landmine(StudentWorld* w, double x, double y)
 	: ActivatingObject(w, IID_LANDMINE, x, y, 1, right)
-{}
+{
+	sftyTcks = 30;
+}
 void Landmine::doSomething()
 {
 	if (isDead())
@@ -261,7 +263,9 @@ void LandmineGoodie::pickUp(Penelope* p)
 // AGENT Implemenatiations
 Agent::Agent(StudentWorld* w, int imageID, double x, double y, int dir)
 	: Actor(w, imageID, x, y, dir, 0)
-{} 
+{
+	ticksSinceCreation = 0;
+} 
 bool Agent::blocksMovement() const { return true; }
 bool Agent::triggersOnlyActiveLandmines() const { return true; }
 int Agent::ticks() { return ticksSinceCreation; }
@@ -272,7 +276,10 @@ void Agent::incTicks() { ticksSinceCreation++; }
 // HUMAN Implementations
 Human::Human(StudentWorld* w, int imageID, double x, double y)
 	: Agent(w, imageID, x, y, right)
-{}
+{
+	infected = false;
+	infectionDuration = 0;
+}
 void Human::beVomitedOnIfAppropriate()
 {
 	infect();
@@ -297,7 +304,11 @@ void Human::incInfectionDuration()
 // PENELOPE Implementations
 Penelope::Penelope(StudentWorld* w, double x, double y)
 	: Human(w, IID_PLAYER, x, y)
-{}
+{
+	vaccines = 0;
+	flameCharges = 0;
+	landmines = 0;
+}
 void Penelope::doSomething()
 {
 	if (isInfected())
@@ -406,7 +417,7 @@ void Penelope::doSomething()
 			if (getNumLandmines() > 0)
 			{
 				decreaseLandmines();
-				Actor* landmine = new Landmine(world(), getX()/10, getY()/10);
+				Actor* landmine = new Landmine(world(), getX()/16, getY()/16);
 				world()->addActor(landmine);
 			}
 			break;
@@ -424,7 +435,6 @@ void Penelope::doSomething()
 }
 void Penelope::useExitIfAppropriate()
 {
-	cout << "Num citizens: " << world()->numCitizens() << endl;
 	if (world()->numCitizens() == 0)
 	{
 		world()->recordLevelFinishedIfAllCitizensGone();
@@ -746,7 +756,9 @@ void Citizen::dieByFallOrBurnIfAppropriate()
 
 Zombie::Zombie(StudentWorld* w, double x, double y)
 	: Agent(w, IID_ZOMBIE, x, y, right)
-{}
+{
+	movementPlanDist = 0;
+}
 void Zombie::attemptVomit()
 {
 	int dir = getDirection();
