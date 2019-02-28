@@ -142,15 +142,15 @@ void Landmine::doSomething()
 	world()->activateOnAppropriateActors(this);
 	double curX = getX();
 	double curY = getY();
-	Actor* p = new Flame(world(), curX, curY, right);
-	Actor* w = new Flame(world(), curX - SPRITE_WIDTH, curY, right);
-	Actor* e = new Flame(world(), curX + SPRITE_WIDTH, curY, right);
-	Actor* s = new Flame(world(), curX, curY - SPRITE_HEIGHT, right);
-	Actor* n = new Flame(world(), curX, curY + SPRITE_HEIGHT, right);
-	Actor* nw = new Flame(world(), curX - SPRITE_WIDTH, curY + SPRITE_HEIGHT, right);
-	Actor* ne = new Flame(world(), curX + SPRITE_WIDTH, curY + SPRITE_HEIGHT, right);
-	Actor* sw = new Flame(world(), curX - SPRITE_WIDTH, curY - SPRITE_HEIGHT, right);
-	Actor* se = new Flame(world(), curX + SPRITE_WIDTH, curY - SPRITE_HEIGHT, right);
+	Actor* p = new Flame(world(), curX/16, curY/16, right);
+	Actor* w = new Flame(world(), (curX - SPRITE_WIDTH)/16, curY/16, right);
+	Actor* e = new Flame(world(), (curX + SPRITE_WIDTH)/16, curY/16, right);
+	Actor* s = new Flame(world(), curX/16, (curY - SPRITE_HEIGHT)/16, right);
+	Actor* n = new Flame(world(), curX/16, (curY + SPRITE_HEIGHT)/16, right);
+	Actor* nw = new Flame(world(), (curX - SPRITE_WIDTH)/16, (curY + SPRITE_HEIGHT)/16, right);
+	Actor* ne = new Flame(world(), (curX + SPRITE_WIDTH)/16, (curY + SPRITE_HEIGHT)/16, right);
+	Actor* sw = new Flame(world(), (curX - SPRITE_WIDTH)/16, (curY - SPRITE_HEIGHT)/16, right);
+	Actor* se = new Flame(world(), (curX + SPRITE_WIDTH)/16, (curY - SPRITE_HEIGHT)/16, right);
 	world()->addActor(p);
 	world()->addActor(w);
 	world()->addActor(e);
@@ -394,7 +394,7 @@ void Penelope::doSomething()
 					}
 					else
 					{
-						Actor* flame = new Flame(world(), flameX, flameY, dir);
+						Actor* flame = new Flame(world(), flameX/16, flameY/16, dir);
 						world()->addActor(flame);
 					}
 				}
@@ -406,7 +406,7 @@ void Penelope::doSomething()
 			if (getNumLandmines() > 0)
 			{
 				decreaseLandmines();
-				Actor* landmine = new Landmine(world(), getX(), getY());
+				Actor* landmine = new Landmine(world(), getX()/10, getY()/10);
 				world()->addActor(landmine);
 			}
 			break;
@@ -433,6 +433,7 @@ void Penelope::useExitIfAppropriate()
 void Penelope::dieByFallOrBurnIfAppropriate()
 {
 	setDead();
+	world()->playSound(SOUND_PLAYER_DIE);
 }
 void Penelope::pickUpGoodieIfAppropriate(Goodie* g)
 {
