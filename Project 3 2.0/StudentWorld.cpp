@@ -167,14 +167,17 @@ int StudentWorld::move()
 
 void StudentWorld::cleanUp()
 {
-	delete penelope;
-	list<Actor*>::iterator it = actors.begin();
-	while (it != actors.end())
+	if (!actors.empty())
 	{
-		delete *it;
-		it++;
+		delete penelope;
+		list<Actor*>::iterator it = actors.begin();
+		while (it != actors.end())
+		{
+			delete *it;
+			it++;
+		}
+		actors.clear();
 	}
-	actors.clear();
 }
 
 Penelope* StudentWorld::getPen()
