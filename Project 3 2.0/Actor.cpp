@@ -131,41 +131,78 @@ Landmine::Landmine(StudentWorld* w, double x, double y)
 	: ActivatingObject(w, IID_LANDMINE, x, y, 1, right)
 {
 	sftyTcks = 30;
+	active = false;
 }
 void Landmine::doSomething()
 {
 	if (isDead())
 		return;
-	decSafetyTicks();
-	if (safetyTicks() > 0)
+	if (!active)
+	{
+		decSafetyTicks();
+		if (safetyTicks() == 0)
+			active = true;
 		return;
-	setDead();
-	world()->playSound(SOUND_LANDMINE_EXPLODE);
-	world()->activateOnAppropriateActors(this);
-	double curX = getX();
-	double curY = getY();
-	Actor* p = new Flame(world(), curX/16, curY/16, right);
-	Actor* w = new Flame(world(), (curX - SPRITE_WIDTH)/16, curY/16, right);
-	Actor* e = new Flame(world(), (curX + SPRITE_WIDTH)/16, curY/16, right);
-	Actor* s = new Flame(world(), curX/16, (curY - SPRITE_HEIGHT)/16, right);
-	Actor* n = new Flame(world(), curX/16, (curY + SPRITE_HEIGHT)/16, right);
-	Actor* nw = new Flame(world(), (curX - SPRITE_WIDTH)/16, (curY + SPRITE_HEIGHT)/16, right);
-	Actor* ne = new Flame(world(), (curX + SPRITE_WIDTH)/16, (curY + SPRITE_HEIGHT)/16, right);
-	Actor* sw = new Flame(world(), (curX - SPRITE_WIDTH)/16, (curY - SPRITE_HEIGHT)/16, right);
-	Actor* se = new Flame(world(), (curX + SPRITE_WIDTH)/16, (curY - SPRITE_HEIGHT)/16, right);
-	world()->addActor(p);
-	world()->addActor(w);
-	world()->addActor(e);
-	world()->addActor(s);
-	world()->addActor(n);
-	world()->addActor(nw);
-	world()->addActor(ne);
-	world()->addActor(sw);
-	world()->addActor(se);
+	}
+	if(active)
+		world()->activateOnAppropriateActors(this);
 }
 void Landmine::activateIfAppropriate(Actor* a)
 {
-	a->dieByFallOrBurnIfAppropriate();
+	if (isDead())
+		return;
+	if (active && a != this) 
+	{
+		world()->playSound(SOUND_LANDMINE_EXPLODE);
+		double curX = getX();
+		double curY = getY();
+		Actor* p = new Flame(world(), curX / 16, curY / 16, right);
+		world()->addActor(p);
+		if (!world()->isFlameBlockedAt((curX - SPRITE_WIDTH) / 16, curY / 16))
+		{
+			Actor* w = new Flame(world(), (curX - SPRITE_WIDTH) / 16, curY / 16, right);
+			world()->addActor(w);
+		}
+		if (!world()->isFlameBlockedAt((curX + SPRITE_WIDTH) / 16, curY / 16))
+		{
+			Actor* e = new Flame(world(), (curX + SPRITE_WIDTH) / 16, curY / 16, right);
+			world()->addActor(e);
+		}
+		if (!world()->isFlameBlockedAt(curX / 16, (curY - SPRITE_HEIGHT) / 16))
+		{
+			Actor* s = new Flame(world(), curX / 16, (curY - SPRITE_HEIGHT) / 16, right);
+			world()->addActor(s);
+		}
+		if (!world()->isFlameBlockedAt(curX / 16, (curY + SPRITE_HEIGHT) / 16))
+		{
+			Actor* n = new Flame(world(), curX / 16, (curY + SPRITE_HEIGHT) / 16, right);
+			world()->addActor(n);
+		}
+		if (!world()->isFlameBlockedAt((curX - SPRITE_WIDTH) / 16, (curY + SPRITE_HEIGHT) / 16))
+		{
+			Actor* nw = new Flame(world(), (curX - SPRITE_WIDTH) / 16, (curY + SPRITE_HEIGHT) / 16, right);
+			world()->addActor(nw);
+		}
+		if (!world()->isFlameBlockedAt((curX + SPRITE_WIDTH) / 16, (curY + SPRITE_HEIGHT) / 16))
+		{
+			Actor* ne = new Flame(world(), (curX + SPRITE_WIDTH) / 16, (curY + SPRITE_HEIGHT) / 16, right);
+			world()->addActor(ne);
+		}
+		if (!world()->isFlameBlockedAt((curX - SPRITE_WIDTH) / 16, (curY - SPRITE_HEIGHT) / 16))
+		{
+			Actor* sw = new Flame(world(), (curX - SPRITE_WIDTH) / 16, (curY - SPRITE_HEIGHT) / 16, right);
+			world()->addActor(sw);
+		}
+		if (!world()->isFlameBlockedAt((curX + SPRITE_WIDTH) / 16, (curY - SPRITE_HEIGHT) / 16))
+		{
+			Actor* se = new Flame(world(), (curX + SPRITE_WIDTH) / 16, (curY - SPRITE_HEIGHT) / 16, right);
+			world()->addActor(se);
+		}
+		Actor* pit = new Pit(world(), curX, curY);
+		world()->addActor(pit);
+
+
+	}
 }
 void Landmine::dieByFallOrBurnIfAppropriate()
 {

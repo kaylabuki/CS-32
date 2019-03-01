@@ -126,6 +126,7 @@ public:
 	void decSafetyTicks();
 private:
 	int sftyTcks;
+	bool active;
 };
 
 class Goodie : public ActivatingObject
