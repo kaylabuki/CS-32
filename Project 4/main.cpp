@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include "provided.h"
+#include "Trie.h"
 using namespace std;
 
 int main()

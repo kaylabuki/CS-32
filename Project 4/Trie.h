@@ -23,18 +23,30 @@ public:
 		cur->deleteTrieNode();
 	}
 
-    void reset();
-    void insert(const std::string& key, const ValueType& value);
-    std::vector<ValueType> find(const std::string& key, bool exactMatchOnly) const;
+	void reset()
+	{
+		// to do
+	}
+
+	void insert(const std::string& key, const ValueType& value)
+	{
+		// to do
+	}
+
+	std::vector<ValueType> find(const std::string& key, bool exactMatchOnly) const
+	{
+		return nullptr; // to do
+	}
 
       // C++11 syntax for preventing copying and assignment
     Trie(const Trie&) = delete;
     Trie& operator=(const Trie&) = delete;
 private:
+	template<typename ValueType>
 	struct TrieNode
 	{
 		vector<TrieNode*> m_ptrs;
-		vector<ItemType> values;
+		vector<ValueType> values;
 		bool leaf;
 
 		void deleteTrieNode()
@@ -48,9 +60,8 @@ private:
 			}
 		}
 	};
-
-	Node* root;
-	const int A, C, G, N, T;
+	int A, C, G, N, T;
+	TrieNode* root;
 };
 
 #endif // TRIE_INCLUDED
