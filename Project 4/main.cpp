@@ -8,8 +8,7 @@ using namespace std;
 
 int main()
 {
-	//string filename = "C:\\Users\kayla\source\repos\CS 32\Project4\Project4\data\Desulfurococcus_mucosus.txt";
-	//string filename = "Desulfurococcus_mucosus.txt";
+	cout << "Testing Genome.cpp:" << endl << endl;
 	string filename = "C:/Users/kayla/source/repos/CS_32/Project4/Project4/data/Desulfurococcus_mucosus.txt";
 	ifstream strm(filename);
 	if (!strm)
@@ -34,5 +33,8 @@ int main()
 	else
 		cout << "Success on bad stream." << endl;
 
+	cout << "Genome.cpp = success!" << endl << endl;
 
+
+ 
 }
