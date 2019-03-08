@@ -8,6 +8,7 @@ using namespace std;
 
 int main()
 {
+	/*
 	cout << "Testing Genome.cpp:" << endl << endl;
 	string filename = "C:/Users/kayla/source/repos/CS_32/Project4/Project4/data/Desulfurococcus_mucosus.txt";
 	ifstream strm(filename);
@@ -35,6 +36,13 @@ int main()
 
 	cout << "Genome.cpp = success!" << endl << endl;
 
+	*/
+
+	cout << "Testing Trie:" << endl << endl;
+
+	cout << "Creating new Trie:" << endl;
+	Trie<int> t();
+	t.insert("CAGTA", 3);
 
  
 }
