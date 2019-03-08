@@ -13,7 +13,6 @@ public:
 		root = new TrieNode;
 		for (int i = 0; i < 26; i++)
 			root->m_ptrs[i] = nullptr;
-		root->leaf = false;
 	}
 
 	~Trie()
@@ -33,22 +32,28 @@ public:
 	void insert(const std::string& key, const ValueType& value)
 	{
 		TrieNode* cur = root;
-		int ch1 = tolower(key[0]) - 97;
-		if (cur->m_ptrs[ch1] == nullptr)
+		for (int i = 0; i < key.length(); i++)
 		{
-			for (int i = 0; i < key.length(); i++)
+			int ch = tolower(key[i]) - 97;
+			if (cur->m_ptrs[ch] == nullptr)
 			{
 				int ch = tolower(key[i]) - 97;
 				cur->m_ptrs[ch] = new TrieNode();
 			}
-			cur->values.push_back(value);
+			cur = cur->m_ptrs[ch];
 		}
-		//to do: other case
+		cur->values.push_back(value);
 	}
 
 	std::vector<ValueType> find(const std::string& key, bool exactMatchOnly) const
 	{
-		return nullptr; // to do
+		std::vector<ValueType> retVals;
+		TrieNode* cur = root;
+		if (exactMatchOnly && isLeaf() && key.length() == 0)
+			return values;
+		int ch = tolower(key[0]) - 97;
+		if (m_ptrs[ch] != nullptr)
+			this->m_ptrsfind[ch]->(key.substr(1), exactMatchOnly);
 	}
 
       // C++11 syntax for preventing copying and assignment
@@ -60,7 +65,6 @@ private:
 	{
 		std::vector<TrieNode*> m_ptrs;
 		std::vector<ValueType> values;
-		bool leaf;
 
 		void deleteTrieNode()
 		{
@@ -87,6 +91,16 @@ private:
 	};
 
 	TrieNode* root;
+
+	/*std::vector<ValueType>findRec(const std::string& key, bool exactMatchOnly, bool foundMismatch)
+	{
+		TrieNode* cur = root;
+		if (cur == nullptr)
+			return;
+		int ch = tolower(key[0]) - 97;
+		if (m_ptrs[ch] != nullptr)
+		this->m_ptrsfind[ch]->(key.substr(1), exactMatchOnly);
+	}*/
 };
 
 #endif // TRIE_INCLUDED
