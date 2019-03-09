@@ -10,14 +10,12 @@ class Trie
 public:
     Trie()
 	{
-		root = new TrieNode;
-		for (int i = 0; i < 26; i++)
-			root->m_ptrs[i] = nullptr;
+		root = new TrieNode<ValueType>;
 	}
 
 	~Trie()
 	{
-		TrieNode* cur = root;
+		TrieNode<ValueType>* cur = root;
 		cur->deleteTrieNode();
 	}
 
@@ -31,29 +29,28 @@ public:
 
 	void insert(const std::string& key, const ValueType& value)
 	{
-		TrieNode* cur = root;
-		for (int i = 0; i < key.length(); i++)
+		TrieNode<ValueType>* cur = root;
+		for (int i = 0; i < key.size(); i++)
 		{
-			int ch = tolower(key[i]) - 97;
-			if (cur->m_ptrs[ch] == nullptr)
+			int ch = key[i];
+			if (cur->children[ch] == nullptr)
 			{
-				int ch = tolower(key[i]) - 97;
-				cur->m_ptrs[ch] = new TrieNode();
+				int ch = key[i];
+				cur->children[ch] = new TrieNode<ValueType>;
 			}
-			cur = cur->m_ptrs[ch];
+			cur = cur->children[ch];
 		}
-		cur->values.push_back(value);
+		(cur->values).push_back(value);
 	}
 
 	std::vector<ValueType> find(const std::string& key, bool exactMatchOnly) const
 	{
 		std::vector<ValueType> retVals;
-		TrieNode* cur = root;
-		if (exactMatchOnly && isLeaf() && key.length() == 0)
-			return values;
-		int ch = tolower(key[0]) - 97;
-		if (m_ptrs[ch] != nullptr)
-			this->m_ptrsfind[ch]->(key.substr(1), exactMatchOnly);
+		bool found = false;
+		root->findRec(key, exactMatchOnly, retVals, found);
+		if (!found)
+			retVals.clear();
+		return retVals;
 	}
 
       // C++11 syntax for preventing copying and assignment
@@ -63,8 +60,14 @@ private:
 	template<typename ValueType>
 	struct TrieNode
 	{
-		std::vector<TrieNode*> m_ptrs;
+		std::vector<TrieNode*> children;
 		std::vector<ValueType> values;
+
+		TrieNode()
+		{
+			for (int i = 0; i < 127; i++)
+				children.push_back(nullptr);
+		}
 
 		void deleteTrieNode()
 		{
@@ -74,33 +77,52 @@ private:
 				delete this;
 			else
 			{
-				for (int i = 0; i < 26; i++)
-					m_ptrs[i]->deleteTrieNode();
+				for (int i = 0; i < 127; i++)
+					children[i]->deleteTrieNode();
 			}
 		}
 
 		bool isLeaf()
 		{
-			for (int i = 0; i < 26; i++)
+			for (int i = 0; i < 127; i++)
 			{
-				if (m_ptrs[i] != nullptr)
+				if (children[i] != nullptr)
 					return true;
 			}
 			return false;
 		}
+
+		void findRec(const std::string& key, bool exactMatchOrFoundMismatch, std::vector<ValueType>& vec, bool& found)
+		{
+			if (key.length() == 0)
+			{
+				for (int i = 0; i < values.size(); i++)
+					vec.push_back(values[i]);
+				found = true;
+				return;
+			}
+			int ch = key[0];
+			if (!children[ch] && exactMatchOrFoundMismatch)
+				return;
+			else if(exactMatchOrFoundMismatch)
+				children[ch]->findRec(key.substr(1), exactMatchOrFoundMismatch, vec, found);
+			else
+			{
+				for (int i = 0; i < 127; i++) // CHANGE BACK TO 0 TO 127
+				{
+					if (children[i] != nullptr)
+					{
+						if(i != ch)
+							children[i]->findRec(key.substr(1), true, vec, found);
+						else
+							children[i]->findRec(key.substr(1), exactMatchOrFoundMismatch, vec, found);
+					}
+				}
+			}
+		}
 	};
 
-	TrieNode* root;
-
-	/*std::vector<ValueType>findRec(const std::string& key, bool exactMatchOnly, bool foundMismatch)
-	{
-		TrieNode* cur = root;
-		if (cur == nullptr)
-			return;
-		int ch = tolower(key[0]) - 97;
-		if (m_ptrs[ch] != nullptr)
-		this->m_ptrsfind[ch]->(key.substr(1), exactMatchOnly);
-	}*/
+	TrieNode<ValueType>* root;
 };
 
 #endif // TRIE_INCLUDED
