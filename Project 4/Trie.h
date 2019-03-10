@@ -34,10 +34,9 @@ public:
 		{
 			int ch = key[i];
 			if (cur->children[ch] == nullptr)
-			{
-				int ch = key[i];
 				cur->children[ch] = new TrieNode<ValueType>;
-			}
+			if(cur != root)
+				cur->children[ch]->parent = cur;
 			cur = cur->children[ch];
 		}
 		(cur->values).push_back(value);
@@ -62,11 +61,13 @@ private:
 	{
 		std::vector<TrieNode*> children;
 		std::vector<ValueType> values;
+		TrieNode<ValueType>* parent;
 
 		TrieNode()
 		{
 			for (int i = 0; i < 127; i++)
 				children.push_back(nullptr);
+			parent = nullptr;
 		}
 
 		void deleteTrieNode()
@@ -108,14 +109,14 @@ private:
 				children[ch]->findRec(key.substr(1), exactMatchOrFoundMismatch, vec, found);
 			else
 			{
-				for (int i = 0; i < 127; i++) // CHANGE BACK TO 0 TO 127
+				for (int i = 0; i < 127; i++)
 				{
-					if (children[i] != nullptr)
+					if (children[i])
 					{
-						if(i != ch)
-							children[i]->findRec(key.substr(1), true, vec, found);
-						else
+						if (i == ch)
 							children[i]->findRec(key.substr(1), exactMatchOrFoundMismatch, vec, found);
+						else if(children[i]->parent != nullptr)
+							children[i]->findRec(key.substr(1), true, vec, found);
 					}
 				}
 			}
