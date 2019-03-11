@@ -111,7 +111,7 @@ private:
 			}
 		}
 	};
-
+	
 	void destructorHelper(TrieNode<ValueType>* cur)
 	{
 		if (cur == nullptr)

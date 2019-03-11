@@ -73,7 +73,4 @@ int main()
 	vec1 = t.find("z", false);
 	for (int i = 0; i < vec1.size(); i++)
 		cout << vec1[i] << " ";*/
-
-
-
 }
