@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 
+#include <iostream>
+using namespace std;
+
 template<typename ValueType>
 class Trie
 {
@@ -15,8 +18,7 @@ public:
 
 	~Trie()
 	{
-		TrieNode<ValueType>* cur = root;
-		cur->deleteTrieNode();
+		destructorHelper(root);
 	}
 
 	void reset()
@@ -70,27 +72,14 @@ private:
 			parent = nullptr;
 		}
 
-		void deleteTrieNode()
-		{
-			if (this == nullptr)
-				return;
-			else if (isLeaf())
-				delete this;
-			else
-			{
-				for (int i = 0; i < 127; i++)
-					children[i]->deleteTrieNode();
-			}
-		}
-
 		bool isLeaf()
 		{
 			for (int i = 0; i < 127; i++)
 			{
 				if (children[i] != nullptr)
-					return true;
+					return false;
 			}
-			return false;
+			return true;
 		}
 
 		void findRec(const std::string& key, bool exactMatchOrFoundMismatch, std::vector<ValueType>& vec, bool& found)
@@ -122,6 +111,15 @@ private:
 			}
 		}
 	};
+
+	void destructorHelper(TrieNode<ValueType>* cur)
+	{
+		if (cur == nullptr)
+			return;
+		for (int i = 0; i < 127; i++) // CHANGE BACK TO 0 to 127
+			destructorHelper(cur->children[i]);
+		delete cur;
+	}
 
 	TrieNode<ValueType>* root;
 };
