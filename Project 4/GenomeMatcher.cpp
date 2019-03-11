@@ -1,44 +1,76 @@
-#include "provided.h"
+#include <iostream>
+#include <fstream> //needed	to	open files
 #include <string>
 #include <vector>
-#include <iostream>
-#include <fstream>
+#include <map>
+#include <algorithm>
+#include "provided.h"
+#include "Trie.h"
 using namespace std;
 
 class GenomeMatcherImpl
 {
 public:
-    GenomeMatcherImpl(int minSearchLength);
-    void addGenome(const Genome& genome);
-    int minimumSearchLength() const;
-    bool findGenomesWithThisDNA(const string& fragment, int minimumLength, bool exactMatchOnly, vector<DNAMatch>& matches) const;
-    bool findRelatedGenomes(const Genome& query, int fragmentMatchLength, bool exactMatchOnly, double matchPercentThreshold, vector<GenomeMatch>& results) const;
+	GenomeMatcherImpl(int minSearchLength);
+	~GenomeMatcherImpl();
+	void addGenome(const Genome& genome);
+	int minimumSearchLength() const;
+	bool findGenomesWithThisDNA(const string& fragment, int minimumLength, bool exactMatchOnly, vector<DNAMatch>& matches) const;
+	bool findRelatedGenomes(const Genome& query, int fragmentMatchLength, bool exactMatchOnly, double matchPercentThreshold, vector<GenomeMatch>& results) const;
 private:
+	int mSL;
+	vector<Genome> genomes;
+	Trie<DNAMatch>* genomeTrie;
 };
 
 GenomeMatcherImpl::GenomeMatcherImpl(int minSearchLength)
 {
-    // This compiles, but may not be correct
+	mSL = minSearchLength;
+	genomeTrie = new Trie<DNAMatch>;
+}
+
+GenomeMatcherImpl::~GenomeMatcherImpl()
+{
+	delete genomeTrie;
 }
 
 void GenomeMatcherImpl::addGenome(const Genome& genome)
 {
-    // This compiles, but may not be correct
+	genomes.push_back(genome);
+
+	for (int i = 0; i < genome.length() - mSL; i++)
+	{
+		string subSeq = "";
+		genome.extract(i, mSL, subSeq);
+		DNAMatch dna;
+		dna.genomeName = genome.name();
+		dna.length = genome.length();
+		dna.position = i;
+		genomeTrie->insert(subSeq, dna);
+	}
 }
 
 int GenomeMatcherImpl::minimumSearchLength() const
 {
-    return 0;  // This compiles, but may not be correct
+	return mSL;
 }
 
 bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minimumLength, bool exactMatchOnly, vector<DNAMatch>& matches) const
 {
-    return false;  // This compiles, but may not be correct
+	if (fragment.size() < minimumLength)
+		return false;
+	if (minimumLength < minimumSearchLength())
+		return false;
+	matches = genomeTrie->find(fragment, exactMatchOnly);
+	if (matches.empty())
+		return false;
+	unique_copy(matches.begin(), matches.end() - 1, matches.begin());
+	return true;
 }
 
 bool GenomeMatcherImpl::findRelatedGenomes(const Genome& query, int fragmentMatchLength, bool exactMatchOnly, double matchPercentThreshold, vector<GenomeMatch>& results) const
 {
-    return false;  // This compiles, but may not be correct
+	return false;  // This compiles, but may not be correct
 }
 
 //******************** GenomeMatcher functions ********************************
@@ -48,30 +80,30 @@ bool GenomeMatcherImpl::findRelatedGenomes(const Genome& query, int fragmentMatc
 
 GenomeMatcher::GenomeMatcher(int minSearchLength)
 {
-    m_impl = new GenomeMatcherImpl(minSearchLength);
+	m_impl = new GenomeMatcherImpl(minSearchLength);
 }
 
 GenomeMatcher::~GenomeMatcher()
 {
-    delete m_impl;
+	delete m_impl;
 }
 
 void GenomeMatcher::addGenome(const Genome& genome)
 {
-    m_impl->addGenome(genome);
+	m_impl->addGenome(genome);
 }
 
 int GenomeMatcher::minimumSearchLength() const
 {
-    return m_impl->minimumSearchLength();
+	return m_impl->minimumSearchLength();
 }
 
 bool GenomeMatcher::findGenomesWithThisDNA(const string& fragment, int minimumLength, bool exactMatchOnly, vector<DNAMatch>& matches) const
 {
-    return m_impl->findGenomesWithThisDNA(fragment, minimumLength, exactMatchOnly, matches);
+	return m_impl->findGenomesWithThisDNA(fragment, minimumLength, exactMatchOnly, matches);
 }
 
 bool GenomeMatcher::findRelatedGenomes(const Genome& query, int fragmentMatchLength, bool exactMatchOnly, double matchPercentThreshold, vector<GenomeMatch>& results) const
 {
-    return m_impl->findRelatedGenomes(query, fragmentMatchLength, exactMatchOnly, matchPercentThreshold, results);
+	return m_impl->findRelatedGenomes(query, fragmentMatchLength, exactMatchOnly, matchPercentThreshold, results);
 }

@@ -4,14 +4,11 @@
 #include <string>
 #include <vector>
 
-#include <iostream>
-using namespace std;
-
 template<typename ValueType>
 class Trie
 {
 public:
-    Trie()
+	Trie()
 	{
 		root = new TrieNode<ValueType>;
 	}
@@ -37,7 +34,7 @@ public:
 			int ch = key[i];
 			if (cur->children[ch] == nullptr)
 				cur->children[ch] = new TrieNode<ValueType>;
-			if(cur != root)
+			if (cur != root)
 				cur->children[ch]->parent = cur;
 			cur = cur->children[ch];
 		}
@@ -54,9 +51,9 @@ public:
 		return retVals;
 	}
 
-      // C++11 syntax for preventing copying and assignment
-    Trie(const Trie&) = delete;
-    Trie& operator=(const Trie&) = delete;
+	// C++11 syntax for preventing copying and assignment
+	Trie(const Trie&) = delete;
+	Trie& operator=(const Trie&) = delete;
 private:
 	template<typename ValueType>
 	struct TrieNode
@@ -94,7 +91,7 @@ private:
 			int ch = key[0];
 			if (!children[ch] && exactMatchOrFoundMismatch)
 				return;
-			else if(exactMatchOrFoundMismatch)
+			else if (exactMatchOrFoundMismatch)
 				children[ch]->findRec(key.substr(1), exactMatchOrFoundMismatch, vec, found);
 			else
 			{
@@ -104,14 +101,14 @@ private:
 					{
 						if (i == ch)
 							children[i]->findRec(key.substr(1), exactMatchOrFoundMismatch, vec, found);
-						else if(children[i]->parent != nullptr)
+						else if (children[i]->parent != nullptr)
 							children[i]->findRec(key.substr(1), true, vec, found);
 					}
 				}
 			}
 		}
 	};
-	
+
 	void destructorHelper(TrieNode<ValueType>* cur)
 	{
 		if (cur == nullptr)
