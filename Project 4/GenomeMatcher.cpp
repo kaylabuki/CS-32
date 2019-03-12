@@ -21,6 +21,10 @@ private:
 	int mSL;
 	vector<Genome> genomes;
 	Trie<DNAMatch>* genomeTrie;
+	bool compareDNA(DNAMatch& dna1, DNAMatch& dna2)
+	{
+		return (dna1.genomeName == dna2.genomeName && dna1.length == dna2.length && dna1.position == dna2.position);
+	}
 };
 
 GenomeMatcherImpl::GenomeMatcherImpl(int minSearchLength)
@@ -44,9 +48,11 @@ void GenomeMatcherImpl::addGenome(const Genome& genome)
 		genome.extract(i, mSL, subSeq);
 		DNAMatch dna;
 		dna.genomeName = genome.name();
-		dna.length = genome.length();
+		dna.length = mSL;
 		dna.position = i;
-		genomeTrie->insert(subSeq, dna);
+		vector<DNAMatch> vec = genomeTrie->find(subSeq, true);
+		if(vec.empty())
+			genomeTrie->insert(subSeq, dna);
 	}
 }
 
@@ -64,7 +70,7 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
 	matches = genomeTrie->find(fragment, exactMatchOnly);
 	if (matches.empty())
 		return false;
-	unique_copy(matches.begin(), matches.end() - 1, matches.begin());
+	//unique_copy(repeatedMatches.begin(), repeatedMatches.end() - 1, matches.begin(), compareDNA);
 	return true;
 }
 
