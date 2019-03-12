@@ -50,9 +50,9 @@ void GenomeMatcherImpl::addGenome(const Genome& genome)
 		dna.genomeName = genome.name();
 		dna.length = mSL;
 		dna.position = i;
-		vector<DNAMatch> vec = genomeTrie->find(subSeq, true);
-		if(vec.empty())
-			genomeTrie->insert(subSeq, dna);
+		//vector<DNAMatch> vec = genomeTrie->find(subSeq, true);
+		//if (find(vec.begin(), vec.end(), ) != vec.end())
+		genomeTrie->insert(subSeq, dna);
 	}
 }
 
@@ -67,10 +67,40 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
 		return false;
 	if (minimumLength < minimumSearchLength())
 		return false;
-	matches = genomeTrie->find(fragment, exactMatchOnly);
-	if (matches.empty())
+	vector<DNAMatch> shortMatches = genomeTrie->find(fragment.substr(0, minimumLength), exactMatchOnly);
+	if (fragment.size() > minimumLength)
+	{
+		for (int i = 0; i < shortMatches.size(); i++)
+		{
+			for (int j = 0; j < genomes.size(); j++)
+			{
+				string frag = "";
+				for (int k = 1; k < fragment.size() - minimumLength; k++)
+				{
+					if (genomes[j].extract(shortMatches[i].position + minimumLength, k, frag))
+					{
+						if (frag == fragment.substr(minimumLength, k))
+							shortMatches[i].length = minimumLength + k;
+					}
+				}
+			}
+		}
+	}
+	if (shortMatches.empty())
 		return false;
-	//unique_copy(repeatedMatches.begin(), repeatedMatches.end() - 1, matches.begin(), compareDNA);
+	/*if (!longMatches.empty())
+		matches = longMatches;*/
+	matches = shortMatches;
+	vector<DNAMatch>::iterator it = matches.begin()+1;
+	while (it != matches.end())
+	{
+		if ((it - 1)->genomeName == it->genomeName)
+		{
+			it = matches.erase(it);
+		}
+		else
+			it++;
+	}
 	return true;
 }
 
