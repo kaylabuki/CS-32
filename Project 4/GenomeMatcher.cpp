@@ -20,17 +20,15 @@ public:
 private:
 	int mSL;
 	vector<Genome> genomes;
-	Trie<DNAMatch>* genomeTrie;
-	bool compareDNA(DNAMatch& dna1, DNAMatch& dna2)
-	{
-		return (dna1.genomeName == dna2.genomeName && dna1.length == dna2.length && dna1.position == dna2.position);
-	}
+	//Trie<DNAMatch>* genomeTrie;
+	Trie<pair<Genome, int>>* genomeTrie;
 };
 
 GenomeMatcherImpl::GenomeMatcherImpl(int minSearchLength)
 {
 	mSL = minSearchLength;
-	genomeTrie = new Trie<DNAMatch>;
+	//genomeTrie = new Trie<DNAMatch>;
+	genomeTrie = new Trie<pair<Genome, int>>;
 }
 
 GenomeMatcherImpl::~GenomeMatcherImpl()
@@ -46,13 +44,14 @@ void GenomeMatcherImpl::addGenome(const Genome& genome)
 	{
 		string subSeq = "";
 		genome.extract(i, mSL, subSeq);
-		DNAMatch dna;
-		dna.genomeName = genome.name();
+		//DNAMatch dna;
+		/*dna.genomeName = genome.name();
 		dna.length = mSL;
 		dna.position = i;
-		//vector<DNAMatch> vec = genomeTrie->find(subSeq, true);
-		//if (find(vec.begin(), vec.end(), ) != vec.end())
-		genomeTrie->insert(subSeq, dna);
+		genomeTrie->insert(subSeq, dna);*/
+		
+		pair<Genome, int> newVal(genome, i);
+		genomeTrie->insert(subSeq, newVal);
 	}
 }
 
@@ -67,8 +66,31 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
 		return false;
 	if (minimumLength < minimumSearchLength())
 		return false;
-	vector<DNAMatch> shortMatches = genomeTrie->find(fragment.substr(0, minimumLength), exactMatchOnly);
+	//vector<DNAMatch> shortMatches = genomeTrie->find(fragment.substr(0, minimumLength), exactMatchOnly);
+	vector<pair<Genome, int>> shortMatches = genomeTrie->find(fragment.substr(0, minimumLength), exactMatchOnly);
 	if (fragment.size() > minimumLength)
+	{
+		for (int i = 0; i < shortMatches.size(); i++)
+		{
+			int moreMatchingLetters = 0;
+			int index = shortMatches[i].second;
+			for (int j = minimumSearchLength(); j < fragment.size(); j++)
+			{
+				string longerMatch = "";
+				if (shortMatches[i].first.extract(index, i, longerMatch))
+				{
+					if (longerMatch == fragment.substr(minimumSearchLength(), i))
+						moreMatchingLetters++;
+				}
+			}
+			DNAMatch newMatch;
+			newMatch.genomeName = shortMatches[i].first.name();
+			newMatch.position = shortMatches[i].second;
+			newMatch.length = minimumSearchLength() + moreMatchingLetters;
+			matches.push_back(newMatch);
+		}
+	}
+	/*if (fragment.size() > minimumLength)
 	{
 		for (int i = 0; i < shortMatches.size(); i++)
 		{
@@ -85,13 +107,13 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
 				}
 			}
 		}
-	}
+	}*/
 	if (shortMatches.empty())
 		return false;
 	/*if (!longMatches.empty())
 		matches = longMatches;*/
-	matches = shortMatches;
-	vector<DNAMatch>::iterator it = matches.begin()+1;
+	//matches = shortMatches;
+	/*vector<DNAMatch>::iterator it = matches.begin()+1;
 	while (it != matches.end())
 	{
 		if ((it - 1)->genomeName == it->genomeName)
@@ -100,7 +122,8 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
 		}
 		else
 			it++;
-	}
+	}*/
+	//matches.erase(unique(matches.begin(), matches.end()), matches.end());
 	return true;
 }
 
@@ -129,7 +152,9 @@ bool GenomeMatcherImpl::findRelatedGenomes(const Genome& query, int fragmentMatc
 			if (totalMatches[i].genomeName == nm)
 				gMatches++;
 		}
-		double p = gMatches / s;
+		double p = 0;
+		if(s != 0)
+			p = gMatches / s;
 		if (p >= matchPercentThreshold)
 		{
 			GenomeMatch g;

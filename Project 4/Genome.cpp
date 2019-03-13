@@ -39,8 +39,8 @@ bool GenomeImpl::load(istream& genomeSource, vector<Genome>& genomes)
 				return false;
 			if (sequence != "")
 			{
-				Genome* ng = new Genome(nm, sequence);
-				genomes.push_back(*ng);
+				Genome ng(nm, sequence);
+				genomes.push_back(ng);
 			}
 			else if (passedFirst)
 				return false;
@@ -72,8 +72,15 @@ bool GenomeImpl::load(istream& genomeSource, vector<Genome>& genomes)
 			}
 			passedFirst = true;
 		}
-		newGenome = "";
+		//newGenome = "";
 	}
+
+	if (nm != "" && sequence != "")
+	{
+		Genome ng(nm, sequence);
+		genomes.push_back(ng);
+	}
+
 	return passedFirst;
 }
 

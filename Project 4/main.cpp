@@ -1,76 +1,38 @@
-#include <iostream>
-#include <fstream> //needed	to	open files
-#include <string>
-#include <vector>
 #include "provided.h"
-#include "Trie.h"
+#include <iostream>
 using namespace std;
 
 int main()
 {
-	/*
-	cout << "Testing Genome.cpp:" << endl << endl;
-	string filename = "C:/Users/kayla/source/repos/CS_32/Project4/Project4/data/Desulfurococcus_mucosus.txt";
-	ifstream strm(filename);
-	if (!strm)
-		cout << "cannot open file" << endl;
-	string badfile = "C:/Users/kayla/source/repos/CS_32/Project4/Project4/data/badformat.txt";
-	ifstream badstrm(badfile);
-	if (!badstrm)
-		cout << "cannot open file" << endl;
-	vector<Genome> vg;
-	bool success = Genome::load(strm, vg);
-	if (success)
-		cout << "Success on good stream!" << endl;
-	else
-		cout << "Fail on good stream." << endl;
-	bool bad = Genome::load(badstrm, vg);
-	if (!bad)
-		cout << "Fail on bad stream!" << endl;
-	else
-		cout << "Success on bad stream." << endl;
-	cout << "Genome.cpp = success!" << endl << endl;
+	Genome genome1("Genome 1", "CGGTGTACNACGACTGGGGATAGAATATCTTGACGTCGTACCGGTTGTAGTCGTTCGACCGAAGGGTTCCGCGCCAGTAC");
+	Genome genome2("Genome 2", "TAACAGAGCGGTNATATTGTTACGAATCACGTGCGAGACTTAGAGCCAGAATATGAAGTAGTGATTCAGCAACCAAGCGG");
+	Genome genome3("Genome 3", "TTTTGAGCCAGCGACGCGGCTTGCTTAACGAAGCGGAAGAGTAGGTTGGACACATTNGGCGGCACAGCGCTTTTGAGCCA");
 
-	*/
+	GenomeMatcher matcher(4);
+	matcher.addGenome(genome1);
+	matcher.addGenome(genome2);
+	matcher.addGenome(genome3);
 
-	/*cout << "Testing Trie:" << endl << endl;
-	cout << "Creating new Trie:" << endl;
-	Trie<int> t;
-	cout << "Trie created!" << endl;
-	t.insert("abc", 3);
-	t.insert("abd", 4);
-	t.insert("acd", 5);
-	t.insert("bbc", 7);
-	cout << endl << "Test 1, should print 3:" << endl;
-	vector<int> vec1 = t.find("abc", true);
-	for (int i = 0; i < vec1.size(); i++)
-		cout << vec1[i] << " ";
-	cout << endl << "Test 2, should print 4:" << endl;
-	vec1 = t.find("abd", true);
-	for (int i = 0; i < vec1.size(); i++)
-		cout << vec1[i] << " ";
-	cout << endl << "Test 3, should print 5:" << endl;
-	vec1 = t.find("acd", true);
-	for (int i = 0; i < vec1.size(); i++)
-		cout << vec1[i] << " ";
-	cout << endl << "Test 4, should print 3 4:" << endl;
-	vec1 = t.find("abc", false);
-	for (int i = 0; i < vec1.size(); i++)
-		cout << vec1[i] << " ";
-	cout << endl << "Test 5, should print 4 5:" << endl;
-	vec1 = t.find("acd", false);
-	for (int i = 0; i < vec1.size(); i++)
-		cout << vec1[i] << " ";
-	cout << endl << "Test 6, should print 3 4 5:" << endl;
-	vec1 = t.find("abd", false);
-	for (int i = 0; i < vec1.size(); i++)
-		cout << vec1[i] << " ";
-	cout << endl << "Test 7, should print nothing:" << endl;
-	vec1 = t.find("a", false);
-	for (int i = 0; i < vec1.size(); i++)
-		cout << vec1[i] << " ";
-	cout << endl << "Test 8, should print nothing:" << endl;
-	vec1 = t.find("z", false);
-	for (int i = 0; i < vec1.size(); i++)
-		cout << vec1[i] << " ";*/
+	std::vector<DNAMatch> matches;
+	bool result;
+
+	cout << "Should print: " << endl << "Genome 1 of length 4 at position 60\nGenome 2 of length 4 at position 54\nGenome 3 of length 4 at position 29\n";
+	result = matcher.findGenomesWithThisDNA("GAAG", 4, true, matches);
+	for (int i = 0; i < matches.size(); i++)
+		cout << matches[i].genomeName << " of length " << matches[i].length << " at position " << matches[i].position << endl;
+
+	cout << endl;
+
+	cout << "Should print: " << endl << "Genome 1 of length 5 at position 22\nGenome 2 of length 5 at position 48\n";
+	result = matcher.findGenomesWithThisDNA("GAATAC", 4, true, matches);
+	for (int i = 0; i < matches.size(); i++)
+		cout << matches[i].genomeName << " of length " << matches[i].length << " at position " << matches[i].position << endl;
+
+	cout << "Should print: " << endl << "False!" << endl;
+	result = matcher.findGenomesWithThisDNA("GAATAC", 6, true, matches);
+	if (!result)
+		cout << "False!";
+	else
+		cout << "True!";
+
 }
