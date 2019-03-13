@@ -5,6 +5,7 @@
 #include <map>
 #include <algorithm>
 #include <unordered_map>
+#include <set>
 #include "provided.h"
 #include "Trie.h"
 using namespace std;
@@ -46,6 +47,14 @@ private:
 		}
 		return count;
 	}
+
+	struct g_compare
+	{
+		bool operator() (GenomeMatch g1, GenomeMatch g2)
+		{
+			return (g1.percentMatch > g2.percentMatch);
+		}
+	};
 };
 
 GenomeMatcherImpl::GenomeMatcherImpl(int minSearchLength)
@@ -116,6 +125,7 @@ bool GenomeMatcherImpl::findRelatedGenomes(const Genome& query, int fragmentMatc
 {
 	int s = (query.length()) / fragmentMatchLength;
 	vector<DNAMatch> totalMatches;
+	set<GenomeMatch, g_compare> gset;
 	for (int i = 0; i < query.length() - fragmentMatchLength; fragmentMatchLength*(i++))
 	{
 		string frag;
@@ -145,9 +155,11 @@ bool GenomeMatcherImpl::findRelatedGenomes(const Genome& query, int fragmentMatc
 			GenomeMatch g;
 			g.genomeName = nm;
 			g.percentMatch = p;
-			results.push_back(g);
+			gset.insert(g);
 		}
-		//sort(results.begin(), results.end(), greater<GenomeMatch>());
+		set<GenomeMatch, g_compare>::iterator it = gset.begin();
+		while(it != gset.end())
+			results.push_back(*it);
 	}
 	return true;
 }
