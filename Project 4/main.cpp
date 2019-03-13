@@ -4,11 +4,11 @@ using namespace std;
 
 int main()
 {
-	Genome genome1("Genome 1", "CGGTGTACNACGACTGGGGATAGAATATCTTGACGTCGTACCGGTTGTAGTCGTTCGACCGAAGGGTTCCGCGCCAGTAC");
-	Genome genome2("Genome 2", "TAACAGAGCGGTNATATTGTTACGAATCACGTGCGAGACTTAGAGCCAGAATATGAAGTAGTGATTCAGCAACCAAGCGG");
-	Genome genome3("Genome 3", "TTTTGAGCCAGCGACGCGGCTTGCTTAACGAAGCGGAAGAGTAGGTTGGACACATTNGGCGGCACAGCGCTTTTGAGCCA");
+	Genome genome1("Genome 1", "CGGGAAGANT");
+	Genome genome2("Genome 2", "TAACAGAGAAT");
+	Genome genome3("Genome 3", "GAAGGAAGAAGAA");
 
-	GenomeMatcher matcher(4);
+	GenomeMatcher matcher(3);
 	matcher.addGenome(genome1);
 	matcher.addGenome(genome2);
 	matcher.addGenome(genome3);
@@ -16,14 +16,17 @@ int main()
 	std::vector<DNAMatch> matches;
 	bool result;
 
-	cout << "Should print: " << endl << "Genome 1 of length 4 at position 60\nGenome 2 of length 4 at position 54\nGenome 3 of length 4 at position 29\n";
-	result = matcher.findGenomesWithThisDNA("GAAG", 4, true, matches);
+	cout << "Should print: " << endl;
+	cout << "Genome 1 of length 5 at position 3" << endl;
+	cout << "Genome 2 of length 3 at position 7" << endl;
+	cout << "Genome 3 of length 5 at position 4" << endl;
+	result = matcher.findGenomesWithThisDNA("GAAGATA", 3, true, matches);
 	for (int i = 0; i < matches.size(); i++)
 		cout << matches[i].genomeName << " of length " << matches[i].length << " at position " << matches[i].position << endl;
 
 	cout << endl;
 
-	cout << "Should print: " << endl << "Genome 1 of length 5 at position 22\nGenome 2 of length 5 at position 48\n";
+	/*cout << "Should print: " << endl << "Genome 1 of length 5 at position 22\nGenome 2 of length 5 at position 48\n";
 	result = matcher.findGenomesWithThisDNA("GAATAC", 4, true, matches);
 	for (int i = 0; i < matches.size(); i++)
 		cout << matches[i].genomeName << " of length " << matches[i].length << " at position " << matches[i].position << endl;
@@ -33,6 +36,6 @@ int main()
 	if (!result)
 		cout << "False!";
 	else
-		cout << "True!";
+		cout << "True!";*/
 
 }

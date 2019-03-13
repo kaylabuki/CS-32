@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <unordered_map>
 #include "provided.h"
 #include "Trie.h"
 using namespace std;
@@ -20,38 +21,58 @@ public:
 private:
 	int mSL;
 	vector<Genome> genomes;
-	//Trie<DNAMatch>* genomeTrie;
-	Trie<pair<Genome, int>>* genomeTrie;
+	//Trie<pair<Genome*, int>> genomeTrie;
+	struct trieValue {
+		string name;
+		int vectorIndex;
+		int sqcPos;
+	};
+	Trie<trieValue> genomeTrie;
+
+	int findLongestPrefix(string fragment, string potentialMatch, bool lookForExactMatch) const
+	{
+		int count = 0;
+		for (int i = 0; i < fragment.size(); i++)
+		{
+			if (fragment[i] != potentialMatch[i] && lookForExactMatch)
+				return count;
+			else if (fragment[i] != potentialMatch[i])
+			{
+				count++;
+				lookForExactMatch = true;
+			}
+			else
+				count++;
+		}
+		return count;
+	}
 };
 
 GenomeMatcherImpl::GenomeMatcherImpl(int minSearchLength)
 {
 	mSL = minSearchLength;
-	//genomeTrie = new Trie<DNAMatch>;
-	genomeTrie = new Trie<pair<Genome, int>>;
 }
 
 GenomeMatcherImpl::~GenomeMatcherImpl()
 {
-	delete genomeTrie;
+	//delete genomeTrie;
 }
 
 void GenomeMatcherImpl::addGenome(const Genome& genome)
 {
 	genomes.push_back(genome);
 
-	for (int i = 0; i < genome.length() - mSL; i++)
+	for (int i = 0; i < genome.length() - mSL + 1; i++)
 	{
 		string subSeq = "";
 		genome.extract(i, mSL, subSeq);
-		//DNAMatch dna;
-		/*dna.genomeName = genome.name();
-		dna.length = mSL;
-		dna.position = i;
-		genomeTrie->insert(subSeq, dna);*/
-		
-		pair<Genome, int> newVal(genome, i);
-		genomeTrie->insert(subSeq, newVal);
+			//Genome ptr = genome;
+			//pair<Genome*, int> newVal(&ptr, i);
+		trieValue newVal;
+		newVal.name = genome.name();
+		newVal.sqcPos = i;
+		newVal.vectorIndex = genomes.size() - 1;
+		genomeTrie.insert(subSeq, newVal);
 	}
 }
 
@@ -62,69 +83,33 @@ int GenomeMatcherImpl::minimumSearchLength() const
 
 bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minimumLength, bool exactMatchOnly, vector<DNAMatch>& matches) const
 {
-	if (fragment.size() < minimumLength)
+	if (fragment.size() < minimumLength || minimumLength < minimumSearchLength())
 		return false;
-	if (minimumLength < minimumSearchLength())
-		return false;
-	//vector<DNAMatch> shortMatches = genomeTrie->find(fragment.substr(0, minimumLength), exactMatchOnly);
-	vector<pair<Genome, int>> shortMatches = genomeTrie->find(fragment.substr(0, minimumLength), exactMatchOnly);
-	if (fragment.size() > minimumLength)
+	vector<trieValue> prefixes = genomeTrie.find(fragment.substr(0, minimumLength), exactMatchOnly);
+	unordered_map<string, DNAMatch> noDuplicates;
+	if (fragment.size() > minimumSearchLength())
 	{
-		for (int i = 0; i < shortMatches.size(); i++)
+		for (int i = 0; i < prefixes.size(); i++)
 		{
-			int moreMatchingLetters = 0;
-			int index = shortMatches[i].second;
-			for (int j = minimumSearchLength(); j < fragment.size(); j++)
-			{
-				string longerMatch = "";
-				if (shortMatches[i].first.extract(index, i, longerMatch))
-				{
-					if (longerMatch == fragment.substr(minimumSearchLength(), i))
-						moreMatchingLetters++;
-				}
-			}
+			int index = prefixes[i].sqcPos;
+			string potentialMatch = "";
+			genomes[prefixes[i].vectorIndex].extract(index, fragment.size(), potentialMatch);
+			int matchingLetters = findLongestPrefix(fragment, potentialMatch, exactMatchOnly);
 			DNAMatch newMatch;
-			newMatch.genomeName = shortMatches[i].first.name();
-			newMatch.position = shortMatches[i].second;
-			newMatch.length = minimumSearchLength() + moreMatchingLetters;
-			matches.push_back(newMatch);
+			newMatch.genomeName = prefixes[i].name;
+			newMatch.position = index;
+			newMatch.length = matchingLetters;
+			unordered_map<string, DNAMatch>::iterator it = noDuplicates.find(newMatch.genomeName);
+			if (it == noDuplicates.end() || it->second.length < newMatch.length)
+				noDuplicates.insert_or_assign(newMatch.genomeName, newMatch);
+		}
+		unordered_map<string, DNAMatch>::iterator it = noDuplicates.begin();
+		while (it != noDuplicates.end())
+		{
+			matches.push_back(it->second);
+			it++;
 		}
 	}
-	/*if (fragment.size() > minimumLength)
-	{
-		for (int i = 0; i < shortMatches.size(); i++)
-		{
-			for (int j = 0; j < genomes.size(); j++)
-			{
-				string frag = "";
-				for (int k = 1; k < fragment.size() - minimumLength; k++)
-				{
-					if (genomes[j].extract(shortMatches[i].position + minimumLength, k, frag))
-					{
-						if (frag == fragment.substr(minimumLength, k))
-							shortMatches[i].length = minimumLength + k;
-					}
-				}
-			}
-		}
-	}*/
-	if (shortMatches.empty())
-		return false;
-	/*if (!longMatches.empty())
-		matches = longMatches;*/
-	//matches = shortMatches;
-	/*vector<DNAMatch>::iterator it = matches.begin()+1;
-	while (it != matches.end())
-	{
-		if ((it - 1)->genomeName == it->genomeName)
-		{
-			it = matches.erase(it);
-		}
-		else
-			it++;
-	}*/
-	//matches.erase(unique(matches.begin(), matches.end()), matches.end());
-	return true;
 }
 
 bool GenomeMatcherImpl::findRelatedGenomes(const Genome& query, int fragmentMatchLength, bool exactMatchOnly, double matchPercentThreshold, vector<GenomeMatch>& results) const
