@@ -75,8 +75,6 @@ void GenomeMatcherImpl::addGenome(const Genome& genome)
 	{
 		string subSeq = "";
 		genome.extract(i, mSL, subSeq);
-		//Genome ptr = genome;
-		//pair<Genome*, int> newVal(&ptr, i);
 		trieValue newVal;
 		newVal.name = genome.name();
 		newVal.sqcPos = i;
@@ -129,7 +127,7 @@ bool GenomeMatcherImpl::findRelatedGenomes(const Genome& query, int fragmentMatc
 {
 	if (fragmentMatchLength < minimumSearchLength())
 		return false;
-	double s = (query.length()) / fragmentMatchLength;
+	int s = (query.length() / fragmentMatchLength);
 	map<string, int> genomeMatchCount;
 	vector<DNAMatch> potentialRelatedGenomes;
 	map<string, GenomeMatch> gmap;
@@ -137,7 +135,6 @@ bool GenomeMatcherImpl::findRelatedGenomes(const Genome& query, int fragmentMatc
 	{
 		string frag;
 		query.extract(i, fragmentMatchLength, frag);
-		cout << "looking for: " << frag << endl;
 		vector<DNAMatch> matches;
 		if (findGenomesWithThisDNA(frag, fragmentMatchLength, exactMatchOnly, matches))
 		{

@@ -13,7 +13,7 @@ class Trie
 public:
 	Trie()
 	{
-		root = new TrieNode<ValueType>;
+		root = new TrieNode;
 	}
 
 	~Trie()
@@ -23,20 +23,18 @@ public:
 
 	void reset()
 	{
-		TrieNode* cur = root;
-		delete this;
-		Trie newTrie = new Trie();
-		newTrie->root = cur;
+		destructorHelper(root);
+		root = new TrieNode;
 	}
 
 	void insert(const std::string& key, const ValueType& value)
 	{
-		TrieNode<ValueType>* cur = root;
+		TrieNode* cur = root;
 		for (int i = 0; i < key.size(); i++)
 		{
 			int ch = key[i];
 			if (cur->children[ch] == nullptr)
-				cur->children[ch] = new TrieNode<ValueType>;
+				cur->children[ch] = new TrieNode;
 			if (cur != root)
 				cur->children[ch]->parent = cur;
 			cur = cur->children[ch];
@@ -58,12 +56,11 @@ public:
 	Trie(const Trie&) = delete;
 	Trie& operator=(const Trie&) = delete;
 private:
-	template<typename ValueType>
 	struct TrieNode
 	{
 		std::vector<TrieNode*> children;
 		std::vector<ValueType> values;
-		TrieNode<ValueType>* parent;
+		TrieNode* parent;
 
 		TrieNode()
 		{
@@ -115,16 +112,16 @@ private:
 		}
 	};
 
-	void destructorHelper(TrieNode<ValueType>* cur)
+	void destructorHelper(TrieNode* cur)
 	{
 		if (cur == nullptr)
 			return;
-		for (int i = 0; i < 127; i++) // CHANGE BACK TO 0 to 127
+		for (int i = 0; i < 127; i++)
 			destructorHelper(cur->children[i]);
 		delete cur;
 	}
 
-	TrieNode<ValueType>* root;
+	TrieNode* root;
 };
 
 #endif // TRIE_INCLUDED
