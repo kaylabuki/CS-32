@@ -50,7 +50,7 @@ private:
 
 	struct g_compare
 	{
-		bool operator() (GenomeMatch g1, GenomeMatch g2)
+		bool operator() (GenomeMatch g1, GenomeMatch g2) const
 		{
 			return (g1.percentMatch > g2.percentMatch);
 		}

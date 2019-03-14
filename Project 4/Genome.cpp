@@ -103,8 +103,7 @@ bool GenomeImpl::extract(int position, int length, string& fragment) const
 	}
 	if (i < (length - 1))
 		return false;
-	else
-		return true;
+	return true;
 }
 
 //******************** Genome functions ************************************
