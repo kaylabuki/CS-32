@@ -12,7 +12,7 @@ using namespace std;
 // directory that contains the genome data files we provide, e.g.,
 // "Z:/CS32/Geenomics/data" or "/Users/fred/cs32/Geenomics/data"
 
-const string PROVIDED_DIR = "Z:/Desktop/p4/data";
+const string PROVIDED_DIR = "data";
 
 const string providedFiles[] = {
 	"Ferroplasma_acidarmanus.txt",

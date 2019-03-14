@@ -119,6 +119,9 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
 			it++;
 		}
 	}
+	if (matches.empty())
+		return false;
+	return true;
 }
 
 bool GenomeMatcherImpl::findRelatedGenomes(const Genome& query, int fragmentMatchLength, bool exactMatchOnly, double matchPercentThreshold, vector<GenomeMatch>& results) const
@@ -126,7 +129,7 @@ bool GenomeMatcherImpl::findRelatedGenomes(const Genome& query, int fragmentMatc
 	int s = (query.length()) / fragmentMatchLength;
 	vector<DNAMatch> totalMatches;
 	set<GenomeMatch, g_compare> gset;
-	for (int i = 0; i < query.length() - fragmentMatchLength; fragmentMatchLength*(i++))
+	for (int i = 0; i < query.length() - fragmentMatchLength + 1; i += fragmentMatchLength)
 	{
 		string frag;
 		query.extract(i, fragmentMatchLength, frag);
