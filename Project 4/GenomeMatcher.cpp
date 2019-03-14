@@ -48,11 +48,11 @@ private:
 		return count;
 	}
 
-	struct g_compare
+	struct smaller_percentage
 	{
-		bool operator() (GenomeMatch g1, GenomeMatch g2) const
+		bool operator ()(const GenomeMatch& p1, const GenomeMatch& p2) const 
 		{
-			return (g1.percentMatch > g2.percentMatch);
+			return p1.percentMatch > p2.percentMatch;
 		}
 	};
 };
@@ -75,8 +75,8 @@ void GenomeMatcherImpl::addGenome(const Genome& genome)
 	{
 		string subSeq = "";
 		genome.extract(i, mSL, subSeq);
-			//Genome ptr = genome;
-			//pair<Genome*, int> newVal(&ptr, i);
+		//Genome ptr = genome;
+		//pair<Genome*, int> newVal(&ptr, i);
 		trieValue newVal;
 		newVal.name = genome.name();
 		newVal.sqcPos = i;
@@ -92,18 +92,19 @@ int GenomeMatcherImpl::minimumSearchLength() const
 
 bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minimumLength, bool exactMatchOnly, vector<DNAMatch>& matches) const
 {
+	matches.clear();
 	if (fragment.size() < minimumLength || minimumLength < minimumSearchLength())
 		return false;
 	vector<trieValue> prefixes = genomeTrie.find(fragment.substr(0, minimumLength), exactMatchOnly);
 	unordered_map<string, DNAMatch> noDuplicates;
-	if (fragment.size() > minimumSearchLength())
+	for (int i = 0; i < prefixes.size(); i++)
 	{
-		for (int i = 0; i < prefixes.size(); i++)
+		int index = prefixes[i].sqcPos;
+		string potentialMatch = "";
+		genomes[prefixes[i].vectorIndex].extract(index, fragment.size(), potentialMatch);
+		int matchingLetters = findLongestPrefix(fragment, potentialMatch, exactMatchOnly);
+		if (matchingLetters >= minimumLength)
 		{
-			int index = prefixes[i].sqcPos;
-			string potentialMatch = "";
-			genomes[prefixes[i].vectorIndex].extract(index, fragment.size(), potentialMatch);
-			int matchingLetters = findLongestPrefix(fragment, potentialMatch, exactMatchOnly);
 			DNAMatch newMatch;
 			newMatch.genomeName = prefixes[i].name;
 			newMatch.position = index;
@@ -112,12 +113,12 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
 			if (it == noDuplicates.end() || it->second.length < newMatch.length)
 				noDuplicates.insert_or_assign(newMatch.genomeName, newMatch);
 		}
-		unordered_map<string, DNAMatch>::iterator it = noDuplicates.begin();
-		while (it != noDuplicates.end())
-		{
-			matches.push_back(it->second);
-			it++;
-		}
+	}
+	unordered_map<string, DNAMatch>::iterator it = noDuplicates.begin();
+	while (it != noDuplicates.end())
+	{
+		matches.push_back(it->second);
+		it++;
 	}
 	if (matches.empty())
 		return false;
@@ -126,44 +127,63 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
 
 bool GenomeMatcherImpl::findRelatedGenomes(const Genome& query, int fragmentMatchLength, bool exactMatchOnly, double matchPercentThreshold, vector<GenomeMatch>& results) const
 {
-	int s = (query.length()) / fragmentMatchLength;
-	vector<DNAMatch> totalMatches;
-	set<GenomeMatch, g_compare> gset;
-	for (int i = 0; i < query.length() - fragmentMatchLength + 1; i += fragmentMatchLength)
+	if (fragmentMatchLength < minimumSearchLength())
+		return false;
+	double s = (query.length()) / fragmentMatchLength;
+	map<string, int> genomeMatchCount;
+	vector<DNAMatch> potentialRelatedGenomes;
+	map<string, GenomeMatch> gmap;
+	for (int i = 0; i < (query.length() - fragmentMatchLength + 1); i += fragmentMatchLength)
 	{
 		string frag;
 		query.extract(i, fragmentMatchLength, frag);
+		cout << "looking for: " << frag << endl;
 		vector<DNAMatch> matches;
 		if (findGenomesWithThisDNA(frag, fragmentMatchLength, exactMatchOnly, matches))
 		{
 			for (int i = 0; i < matches.size(); i++)
-				totalMatches.push_back(matches[i]);
+			{
+				potentialRelatedGenomes.push_back(matches[i]);
+				map<string, int>::iterator it = genomeMatchCount.find(matches[i].genomeName);
+				if (it == genomeMatchCount.end())
+					genomeMatchCount.insert({ matches[i].genomeName, 1 });
+				else
+					it->second++;
+			}
 		}
 	}
 
-	for(int i = 0; i < genomes.size(); i++)
+	for (int i = 0; i < potentialRelatedGenomes.size(); i++)
 	{
-		int gMatches = 0;
-		string nm = genomes[i].name();
-		for (int j = 0; j < totalMatches.size(); j++)
-		{
-			if (totalMatches[i].genomeName == nm)
-				gMatches++;
-		}
 		double p = 0;
-		if(s != 0)
-			p = gMatches / s;
+		string nm = potentialRelatedGenomes[i].genomeName;
+		int matches = genomeMatchCount.at(nm);
+		if (s != 0)
+			p = 100*(matches / s);
 		if (p >= matchPercentThreshold)
 		{
 			GenomeMatch g;
 			g.genomeName = nm;
 			g.percentMatch = p;
-			gset.insert(g);
+			map<string, GenomeMatch>::iterator it = gmap.find(nm);
+			if (it != gmap.end())
+			{
+				if (it->second.percentMatch < p)
+					gmap[nm].percentMatch = p;
+			}
+			else
+				gmap.emplace(nm, g);
 		}
-		set<GenomeMatch, g_compare>::iterator it = gset.begin();
-		while(it != gset.end())
-			results.push_back(*it);
 	}
+	map<string, GenomeMatch>::iterator it = gmap.begin();
+	while (it != gmap.end())
+	{
+		results.push_back(it->second);
+		it++;
+	}
+	sort(results.begin(), results.end(), smaller_percentage());
+	if (results.empty())
+		return false;
 	return true;
 }
 

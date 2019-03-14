@@ -31,26 +31,26 @@ bool GenomeImpl::load(istream& genomeSource, vector<Genome>& genomes)
 	bool passedFirst = false;
 	while (getline(genomeSource, newGenome))
 	{
-		if (newGenome == "")
-			return false;
-		else if (newGenome[0] == '>')
+		/*if (newGenome == "")
+			return false;*/
+		/*else*/ if (newGenome[0] == '>')
 		{
-			if (newGenome.substr(1) == "")
-				return false;
+			/*if (newGenome.substr(1) == "")
+				return false;*/
 			if (sequence != "")
 			{
 				Genome ng(nm, sequence);
 				genomes.push_back(ng);
 			}
-			else if (passedFirst)
-				return false;
+			/*else if (passedFirst)
+				return false;*/
 			nm = newGenome.substr(1);
 			sequence = "";
 		}
 		else
 		{
-			if (nm == "")
-				return false;
+			/*if (nm == "")
+				return false;*/
 			for (int i = 0; i < newGenome.length(); i++)
 			{
 				switch (newGenome[i])
@@ -66,7 +66,7 @@ bool GenomeImpl::load(istream& genomeSource, vector<Genome>& genomes)
 				}
 				default:
 				{
-					return false;
+					//return false;
 				}
 				}
 			}
@@ -103,7 +103,8 @@ bool GenomeImpl::extract(int position, int length, string& fragment) const
 	}
 	if (i < (length - 1))
 		return false;
-	return true;
+	else
+		return true;
 }
 
 //******************** Genome functions ************************************

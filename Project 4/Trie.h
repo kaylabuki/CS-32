@@ -4,13 +4,16 @@
 #include <string>
 #include <vector>
 
+#include <iostream>
+using namespace std;
+
 template<typename ValueType>
 class Trie
 {
 public:
 	Trie()
 	{
-		root = new TrieNode;
+		root = new TrieNode<ValueType>;
 	}
 
 	~Trie()
@@ -20,18 +23,20 @@ public:
 
 	void reset()
 	{
-		destructorHelper(root);
-		root = new TrieNode;
+		TrieNode* cur = root;
+		delete this;
+		Trie newTrie = new Trie();
+		newTrie->root = cur;
 	}
 
 	void insert(const std::string& key, const ValueType& value)
 	{
-		TrieNode* cur = root;
+		TrieNode<ValueType>* cur = root;
 		for (int i = 0; i < key.size(); i++)
 		{
 			int ch = key[i];
 			if (cur->children[ch] == nullptr)
-				cur->children[ch] = new TrieNode;
+				cur->children[ch] = new TrieNode<ValueType>;
 			if (cur != root)
 				cur->children[ch]->parent = cur;
 			cur = cur->children[ch];
@@ -53,11 +58,12 @@ public:
 	Trie(const Trie&) = delete;
 	Trie& operator=(const Trie&) = delete;
 private:
+	template<typename ValueType>
 	struct TrieNode
 	{
 		std::vector<TrieNode*> children;
 		std::vector<ValueType> values;
-		TrieNode* parent;
+		TrieNode<ValueType>* parent;
 
 		TrieNode()
 		{
@@ -78,14 +84,17 @@ private:
 
 		void findRec(const std::string& key, bool exactMatchOrFoundMismatch, std::vector<ValueType>& vec, bool& found)
 		{
-			if (key.length() == 0)
-			{
-				for (int i = 0; i < values.size(); i++)
-					vec.push_back(values[i]);
-				found = true;
-				return;
-			}
 			int ch = key[0];
+			if (key.length() == 1)
+			{
+				if (children[ch])
+				{
+					for (int i = 0; i < children[ch]->values.size(); i++)
+						vec.push_back(children[ch]->values[i]);
+					found = true;
+					return;
+				}
+			}
 			if (!children[ch] && exactMatchOrFoundMismatch)
 				return;
 			else if (exactMatchOrFoundMismatch)
@@ -106,7 +115,7 @@ private:
 		}
 	};
 
-	void destructorHelper(TrieNode* cur)
+	void destructorHelper(TrieNode<ValueType>* cur)
 	{
 		if (cur == nullptr)
 			return;
@@ -115,7 +124,7 @@ private:
 		delete cur;
 	}
 
-	TrieNode* root;
+	TrieNode<ValueType>* root;
 };
 
 #endif // TRIE_INCLUDED
