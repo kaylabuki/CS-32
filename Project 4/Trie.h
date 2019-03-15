@@ -91,6 +91,10 @@ private:
 					found = true;
 					return;
 				}
+				/*for (int i = 0; i < children[i]->values.size(); i++)
+					vec.push_back(children[i]->values[i]);
+				found = true;
+				return;*/
 			}
 			if (!children[ch] && exactMatchOrFoundMismatch)
 				return;
