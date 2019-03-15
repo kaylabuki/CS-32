@@ -4,9 +4,6 @@
 #include <string>
 #include <vector>
 
-#include <iostream>
-using namespace std;
-
 template<typename ValueType>
 class Trie
 {
