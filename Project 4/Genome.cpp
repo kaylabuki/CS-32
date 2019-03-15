@@ -97,7 +97,7 @@ string GenomeImpl::name() const
 bool GenomeImpl::extract(int position, int length, string& fragment) const
 {
 	int i = position;
-	for (; i < position+length && i < this->length(); i++)
+	for (; i < position + length && i < this->length(); i++)
 	{
 		fragment += m_sequence[i];
 	}
