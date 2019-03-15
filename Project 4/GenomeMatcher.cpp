@@ -14,7 +14,6 @@ class GenomeMatcherImpl
 {
 public:
 	GenomeMatcherImpl(int minSearchLength);
-	~GenomeMatcherImpl();
 	void addGenome(const Genome& genome);
 	int minimumSearchLength() const;
 	bool findGenomesWithThisDNA(const string& fragment, int minimumLength, bool exactMatchOnly, vector<DNAMatch>& matches) const;
@@ -60,11 +59,6 @@ private:
 GenomeMatcherImpl::GenomeMatcherImpl(int minSearchLength)
 {
 	mSL = minSearchLength;
-}
-
-GenomeMatcherImpl::~GenomeMatcherImpl()
-{
-	//delete genomeTrie;
 }
 
 void GenomeMatcherImpl::addGenome(const Genome& genome)
