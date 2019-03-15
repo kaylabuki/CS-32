@@ -50,7 +50,7 @@ private:
 
 	struct smaller_percentage
 	{
-		bool operator ()(const GenomeMatch& p1, const GenomeMatch& p2) const 
+		bool operator ()(const GenomeMatch& p1, const GenomeMatch& p2) const
 		{
 			return p1.percentMatch > p2.percentMatch;
 		}
@@ -93,7 +93,7 @@ bool GenomeMatcherImpl::findGenomesWithThisDNA(const string& fragment, int minim
 	matches.clear();
 	if (fragment.size() < minimumLength || minimumLength < minimumSearchLength())
 		return false;
-	vector<trieValue> prefixes = genomeTrie.find(fragment.substr(0, minimumLength), exactMatchOnly);
+	vector<trieValue> prefixes = genomeTrie.find(fragment.substr(0, minimumSearchLength()), exactMatchOnly);
 	unordered_map<string, DNAMatch> noDuplicates;
 	for (int i = 0; i < prefixes.size(); i++)
 	{
@@ -156,7 +156,7 @@ bool GenomeMatcherImpl::findRelatedGenomes(const Genome& query, int fragmentMatc
 		string nm = potentialRelatedGenomes[i].genomeName;
 		int matches = genomeMatchCount.at(nm);
 		if (s != 0)
-			p = 100*(matches / s);
+			p = 100.0 * matches / s;
 		if (p >= matchPercentThreshold)
 		{
 			GenomeMatch g;
