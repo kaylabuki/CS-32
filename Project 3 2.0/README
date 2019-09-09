@@ -1,5 +1,5 @@
 In this file, you will find a high-level description of each of my public member functions in each of my classes, and why I chose to define each member function in its host class; I also explain why (or why not) I decided to make each function virtual or pure virtual. 
-
+ 
 
 
 StudentWorld class:
