@@ -5,123 +5,87 @@ In this file, you will find a high-level description of each of my public member
 StudentWorld class:
 
 	- StudentWorld(std::string assertDir)
-		○ StudentWorld's constructor initializes a private citizens tracker to zero and a private levelDone boolean to false. This function       is in the StudentWorld host class because it is the StudentWorld constructor. It is not virtual because constructors cannot be           virtual.
-    
+		○ StudentWorld's constructor, initializes a private citizens tracker to zero and a private levelDone boolean to false. This function is in the StudentWorld host class because it is the StudentWorld constructor. It is not virtual because constructors cannot be virtual.
 	- virtual ~StudentWorld()
-		○ StudentWorld's destructor, which calls the cleanup() method and effectively deletes all actors and clears the game. This function       is in the StudentWorld host class because it is the StudentWorld destructor. It is virtual because, though it does not have any         derived classes, StudentWorld is derived from GameWorld. GameWorld has a virtual destructor, therefore StudentWorld's destructor         is virtual for clarity.
-    
+		○ StudentWorld's destructor, which calls the cleanup() method and effectively deletes all actors and clears the game. This function is in the StudentWorld host class because it is the StudentWorld destructor. It is virtual because, though it does not have any derived classes, StudentWorld is derived from GameWorld. GameWorld has a virtual destructor, therefore StudentWorld's destructor is virtual for clarity.
 	- virtual int init()
-		○ StudentWorld's initialization function called by the game framework when a new level is to begin. Using the level class, init()         determines where and what needs to be created for the current level, and creates and scales new Actors accordingly. Those Actors         are added to a list of Actor pointers on which game play depends upon. This function is also resposible for determining if               gameplay should halt (e.g. game is completed, level file reading error, etc) and returns values to signify that either the game         should continue or stop. This funciton is derived from GameWorld's virtual version of the function, so this function is virtual         for clarity.
-    
+		○ StudentWorld's initialization function called by the game framework when a new level is to begin. Using the level class, init() determines where and what needs to be created for the current level, and creates and scales new Actors accordingly. Those Actors are added to a list of Actor pointers on which game play depends upon. This function is also resposible for determining if gameplay should halt (e.g. game is completed, level file reading error, etc) and returns values to signify that either the game should continue or stop. This funciton is derived from GameWorld's virtual version of the function, so this function is virtual for clarity.
 	- virtal int move()
-		○ StudentWorld's move function called by the game framework once per tick during game play. Most importantly, this function prompts       every actor in the game (penelope included) to perform their doSomething() function. After it does this, this function is               responsible for freeing any Actors that died during the tick by deleting them and removing them from the list of Actor pointers.         This function is also resposible for determining if gameplay should halt (e.g. game is completed, level file reading error, etc)         and returns values to signify that either the game should continue or stop. Also, this function is resposible for updating the           text line at the top of the game with current and accurate data. This funciton is derived from GameWorld's virtual version of the       function, so this function is virtual for clarity.
-    
+		○ StudentWorld's move function called by the game framework once per tick during game play. Most importantly, this function prompts every actor in the game (penelope included) to perform their doSomething() function. After it does this, this function is responsible for freeing any Actors that died during the tick by deleting them and removing them from the list of Actor pointers. This function is also resposible for determining if gameplay should halt (e.g. game is completed, level file reading error, etc) and returns values to signify that either the game should continue or stop. Also, this function is resposible for updating the text line at the top of the game with current and accurate data. This funciton is derived from GameWorld's virtual version of the function, so this function is virtual for clarity.
 	- virtual void cleanup()
-		○ StudentWorld's clean up function called by the game framework when a level has ended. This function is responsible for deleting         all remaining Actors and clearing the list of Actor pointers. This funciton is derived from GameWorld's virtual version of the           function, so this function is virtual for clarity.
-    
+		○ StudentWorld's clean up function called by the game framework when a level has ended. This function is responsible for deleting all remaining Actors and clearing the list of Actor pointers. This funciton is derived from GameWorld's virtual version of the function, so this function is virtual for clarity.
 	- Penelope* getPen()
-		○ A function that returns the pointer to StudentWorld's Penelope object, as she is not kept in the list of Actor pointers. To be           used by functions in actor.cpp for things like determining distance from Penelope. This function is not virtual because                 StudentWorld has no derived classes and therefore will never need to redefine this function.
-    
+		○ A function that returns the pointer to StudentWorld's Penelope object, as she is not kept in the list of Actor pointers. To be used by functions in actor.cpp for things like determining distance from Penelope. This function is not virtual because StudentWorld has no derived classes and therefore will never need to redefine this function.
 	- void addActor(Actor* a)
-		○ A function that adds a to the list of Actor pointers maintained by the StudentWorld. This function is not virtual because               StudentWorld has no derived classes and therefore will never need to redefine this function.
-    
+		○ A function that adds a to the list of Actor pointers maintained by the StudentWorld. This function is not virtual because StudentWorld has no derived classes and therefore will never need to redefine this function.
 	- void addCitizen()
-		○ A function that increments the private citizens member variable to update this number when a citizen is created during                   initialization. This function is not virtual because StudentWorld has no derived classes and therefore will never need to redefine       this function.
-    
+		○ A function that increments the private citizens member variable to update this number when a citizen is created during initialization. This function is not virtual because StudentWorld has no derived classes and therefore will never need to redefine this function.
 	- void recordCitizenGone()
-		○ A function that decrements the private citizens member variable to update this number when a citizen dies (by being burned or           falling into a pit) or turns into a zombie (by being infected by vomit). This function is not virtual because StudentWorld has no       derived classes and therefore will never need to redefine this function.
-    
+		○ A function that decrements the private citizens member variable to update this number when a citizen dies (by being burned or falling into a pit) or turns into a zombie (by being infected by vomit). This function is not virtual because StudentWorld has no derived classes and therefore will never need to redefine this function.
 	- int numCitizens()
-		○ A function that returns the private citizens member variable. The most important use of this function is when it is used in             actor.cpp when determining whether or not Penelope can use an exit (she can only use an exit if there are no more remaining             citizens). This function is not virtual because StudentWorld has no derived classes and therefore will never need to redefine this       function.
-    
+		○ A function that returns the private citizens member variable. The most important use of this function is when it is used in actor.cpp when determining whether or not Penelope can use an exit (she can only use an exit if there are no more remaining citizens). This function is not virtual because StudentWorld has no derived classes and therefore will never need to redefine this function.
 	- void recordLevelFinishedIfAllCitizensGone()
-		○ A function that is called in actor.cpp when Penelope determines she will use an exit. It changes the private levelDone member bool       to true. This function is not virtual because StudentWorld has no derived classes and therefore will never need to redefine this         function.
-    
+		○ A function that is called in actor.cpp when Penelope determines she will use an exit. It changes the private levelDone member bool to true. This function is not virtual because StudentWorld has no derived classes and therefore will never need to redefine this function.
 	- bool levelFinished()
-		○ A function that returns the private member bool levelDone and is called during every tick to determine if a level is finished and,      if so, have move() return the appropriate value. This function is not virtual because StudentWorld has no derived classes and            therefore will never need to redefine this function.
-    
+		○ A function that returns the private member bool levelDone and is called during every tick to determine if a level is finished and, if so, have move() return the appropriate value. This function is not virtual because StudentWorld has no derived classes and therefore will never need to redefine this function.
 	- void resetLevelFinished()
-		○ A function that resets the private member bool levelDone to false. It is called at the beginning of the init() function. This           function is not virtual because StudentWorld has no derived classes and therefore will never need to redefine this function.
-    
+		○ A function that resets the private member bool levelDone to false. It is called at the beginning of the init() function. This function is not virtual because StudentWorld has no derived classes and therefore will never need to redefine this function.
 	- void activateOnAppropriateActors(Actor* a)
-		○ A function that, for each actor overlapping on a, calls Actor's activateIfAppropriate(a). This function is not virtual because           StudentWorld has no derived classes and therefore will never need to redefine this function.
-    
+		○ A function that, for each actor overlapping on a, calls Actor's activateIfAppropriate(a). This function is not virtual because StudentWorld has no derived classes and therefore will never need to redefine this function.
 	- bool isAgentMovementBlockedAt(double x, double y, Actor* a) const
-		○ A function that determines whether or not Actor a is blocked (by an agent-blocking Actor) from moving to location (x, y). It does       so by iterating throughIt returns true if it is blocked, false otherwise. This function is not virtual because StudentWorld has no       derived classes and therefore will never need to redefine this function.
-    
+		○ A function that determines whether or not Actor a is blocked (by an agent-blocking Actor) from moving to location (x, y). It does so by iterating throughIt returns true if it is blocked, false otherwise. This function is not virtual because StudentWorld has no derived classes and therefore will never need to redefine this function.
 	- bool isFlameBlockedAt(double x, double y) const
-		○ A function that determines whether or not a flame is blocked (by a flame-blocking Actor) from being created at location (x, y). It       returns true if it is blocked, false otherwise. This function is not virtual because StudentWorld has no derived classes and             therefore will never need to redefine this function.
-    
+		○ A function that determines whether or not a flame is blocked (by a flame-blocking Actor) from being created at location (x, y). It returns true if it is blocked, false otherwise. This function is not virtual because StudentWorld has no derived classes and therefore will never need to redefine this function.
 	- bool isZombieVomitTargetAt(double x, double y) const
-		○ A function that determines whether or not there is a target for zombie vomit at location (x, y). It does so by iterating through         the Actor pointer list and checking if each object triggers Zombie vomit, as well as checking penelope. It returns true if it           there is, false otherwise. This function is not virtual because StudentWorld has no derived classes and therefore will never need       to redefine this function.
-    
+		○ A function that determines whether or not there is a target for zombie vomit at location (x, y). It does so by iterating through the Actor pointer list and checking if each object triggers Zombie vomit, as well as checking penelope. It returns true if it there is, false otherwise. This function is not virtual because StudentWorld has no derived classes and therefore will never need to redefine this function.
 	- bool locateNearestVomitTrigger(double x, double y, double& otherX, double& otherY, double& distace)
-		○ A function that returns true if there is a living human, otherwise false. If true, otherX, otherY, and distance will be set to the       location of the human nearest to (x, y). This function is used by actor.cpp when determining a zombie's movement and vomitting.         This function is not virtual because StudentWorld has no derived classes and therefore will never need to redefine this function.
-    
+		○ A function that returns true if there is a living human, otherwise false. If true, otherX, otherY, and distance will be set to the location of the human nearest to (x, y). This function is used by actor.cpp when determining a zombie's movement and vomitting. This function is not virtual because StudentWorld has no derived classes and therefore will never need to redefine this function.
 	- bool locateNearestCitizenTrigger(double x, double y, double& otherX, double& otherY, double& distace, bool& isThreat) const
-		○ A function that returns true if there is a living zombie or Penelope, otherwise false. If true, otherX, otherY, and distance will       be set to the location of the nearest one to (x, y), and isThreat will be set to true if it's a zombie, false if a Penelope.  This       function is used by actor.cpp when determining a citizen's movement. This function is not virtual because StudentWorld has no           derived classes and therefore will never need to redefine this function.
-    
+		○ A function that returns true if there is a living zombie or Penelope, otherwise false. If true, otherX, otherY, and distance will be set to the location of the nearest one to (x, y), and isThreat will be set to true if it's a zombie, false if a Penelope.  This function is used by actor.cpp when determining a citizen's movement. This function is not virtual because StudentWorld has no derived classes and therefore will never need to redefine this function.
 	- bool locateNearestCitizenThreat(double x, double y, double& otherX, double& otherY, double& distace) const
-		○ A function that returns true if there is a living zombie, otherwise false. If true, otherX, otherY, and distance will be set to         the location of the nearest one to (x, y). This function is used by actor.cpp when determining a citizen's movement. This function       is not virtual because StudentWorld has no derived classes and therefore will never need to redefine this function.
-    
+		○ A function that returns true if there is a living zombie, otherwise false. If true, otherX, otherY, and distance will be set to the location of the nearest one to (x, y). This function is used by actor.cpp when determining a citizen's movement. This function is not virtual because StudentWorld has no derived classes and therefore will never need to redefine this function.
 	- string getGameStatText()
-		○ A function that returns a game status text to use in move when setGameStatText() is called. The string returned contains the             current score and level, as well as the current lives, vaccines, flames, mines, and infection status held by penelope.
+		○ A function that returns a game status text to use in move when setGameStatText() is called. The string returned contains the current score and level, as well as the current lives, vaccines, flames, mines, and infection status held by penelope.
 
 
 
 Actor class:
-
 	- Actor(StudentWorld* w, int imageID, double x, double y, int dir, int depth)
-		○ The constructor for the Actor class. It initializes its parent GraphObject class via initializer list, and initalizes the               studentWorld member variable. It is not virtual because constructors are not virtual.
-    
+		○ The constructor for the Actor class. It initializes its parent GraphObject class via initializer list, and initalizes the studentWorld member variable. It is not virtual because constructors are not virtual.
 	- virtual void doSomething() = 0
-		○ The doSomething() method, called once per tick by StudentWorld's move() for every living actor. It is pure virtual because it is         different for every different type of Actor, and therefore must be uniquely implemented for every different type of Actor. It           being in the Actor class forces us to implement it in every Actor derived class (which is something we want) and allows us to use       polymorphism in our StudentWorld Actor pointer list.
-    
+		○ The doSomething() method, called once per tick by StudentWorld's move() for every living actor. It is pure virtual because it is different for every different type of Actor, and therefore must be uniquely implemented for every different type of Actor. It being in the Actor class forces us to implement it in every Actor derived class (which is something we want) and allows us to use polymorphism in our StudentWorld Actor pointer list.
 	- bool isDead() const
-		○ A bool function that returns the private member bool called dead. This function allows StudentWorld() to remove an actor from its       list if dead, among other important functionalities. It is not virtual because, for every Actor object, isDead() should return the       same thing.
-    
+		○ A bool function that returns the private member bool called dead. This function allows StudentWorld() to remove an actor from its list if dead, among other important functionalities. It is not virtual because, for every Actor object, isDead() should return the same thing.
 	- void setDead()
-		○ A function that allows us to set the private member bool dead to true. This is used when an Actor dies, and allows us to notify         StudentWorld() to remove an actor from its list, among other important functionalities. It is not virtual because, for every Actor       object, setDead() should change the same thing.
-    
+		○ A function that allows us to set the private member bool dead to true. This is used when an Actor dies, and allows us to notify StudentWorld() to remove an actor from its list, among other important functionalities. It is not virtual because, for every Actor object, setDead() should change the same thing.
 	- StudentWorld* world() const
-		○ A function that returns a pointer to the StudentWorld object to which the Actor belongs. This function allows the Actor class to         access the StudentWorld and it's functions, notabley getX() and getY(). It is not virtual because, for every Actor object, world()       should return the same StudentWorld pointer.
-    
+		○ A function that returns a pointer to the StudentWorld object to which the Actor belongs. This function allows the Actor class to access the StudentWorld and it's functions, notabley getX() and getY(). It is not virtual because, for every Actor object, world() should return the same StudentWorld pointer.
 	- virtual void activateIfAppropriate(Actor* a)
-		○ A function that, if called on an activated object (e.g. exits, vomit, goodies, etc) performs its effect on a. This function is           used in StudentWorld's activateOnAppropriateActors() function. This function is virtual because, different Actors should activate       on different Actors (including not at all). Therefore the "default" Actor implementation of this function does nothing, but its         functionality is reimplemented depending on the actor.
-    
+		○ A function that, if called on an activated object (e.g. exits, vomit, goodies, etc) performs its effect on a. This function is used in StudentWorld's activateOnAppropriateActors() function. This function is virtual because, different Actors should activate on different Actors (including not at all). Therefore the "default" Actor implementation of this function does nothing, but its functionality is reimplemented depending on the actor.
 	- virtual void useExitIfAppropriate()
-		○ A function that, if called on an Actor that uses exits, causes it to use the exit. This function is called on a in Exit's               implementation of activateIfAppropriate(Actor* a). This function is virtual because, different Actors should use Exits at               different times (including not at all). Therefore the "default" Actor implementation of this function does nothing, but its             functionality is reimplemented for Humans.
-    
+		○ A function that, if called on an Actor that uses exits, causes it to use the exit. This function is called on a in Exit's implementation of activateIfAppropriate(Actor* a). This function is virtual because, different Actors should use Exits at different times (including not at all). Therefore the "default" Actor implementation of this function does nothing, but its functionality is reimplemented for Humans.
 	- virtual void dieByFallOrBurnIfAppropriate()
-		○ A function that, if called on an object that can die by falling into a pit or burning, kills the object. It is called by Pit,           Flame, and Landmine to kill an Actor if it should be killed. This function is virtual because, different Actors can be burned and       fall into pits (many Actors can't do either). Therefore the "default" Actor implementation of this function does nothing, but its       functionality is reimplemented for Agents.
-    
+		○ A function that, if called on an object that can die by falling into a pit or burning, kills the object. It is called by Pit, Flame, and Landmine to kill an Actor if it should be killed. This function is virtual because, different Actors can be burned and fall into pits (many Actors can't do either). Therefore the "default" Actor implementation of this function does nothing, but its functionality is reimplemented for Agents.
 	- virtual void beVomitedOnIfAppropriate()
-		○ A function that, if called on an object that can be infected by Vomit, infects it. It is called by Vomit to infect an Actor if it       should be infected. This function is virtual because, different Actors can be infected by vomit (many Actors can't). Therefore the       "default" Actor implementation of this function does nothing, but its functionality is reimplemented for Humans.
-    
+		○ A function that, if called on an object that can be infected by Vomit, infects it. It is called by Vomit to infect an Actor if it should be infected. This function is virtual because, different Actors can be infected by vomit (many Actors can't). Therefore the "default" Actor implementation of this function does nothing, but its functionality is reimplemented for Humans.
 	- virtual void pickUpGoodieIfAppropriate(Goodie* g)
-		○ A function that, if called on an object that can be infected by can pick up a goodie, causes it to pick up Goodie g. It is called       by the Goodies classes to cause pickups. This function is virtual because, most Actors cannot pick up Goodies. Therefore the             "default" Actor implementation of this function does nothing, but its functionality is reimplemented for Penelope.
-    
+		○ A function that, if called on an object that can be infected by can pick up a goodie, causes it to pick up Goodie g. It is called by the Goodies classes to cause pickups. This function is virtual because, most Actors cannot pick up Goodies. Therefore the "default" Actor implementation of this function does nothing, but its functionality is reimplemented for Penelope.
 	- virtual bool blocksMovement() const
-		○ A function that returns whether or not an Actor blocks movement. It is used to help determine the blocking of movement for Actors       that move. Most objects do not block movement, so this function is virtual and its "default" implementation in Actor returns             false. However, Agents and walls block movement, so this function is reimplemented for them and is therefore virtual.
-    
+		○ A function that returns whether or not an Actor blocks movement. It is used to help determine the blocking of movement for Actors that move. Most objects do not block movement, so this function is virtual and its "default" implementation in Actor returns false. However, Agents and walls block movement, so this function is reimplemented for them and is therefore virtual.
 	- virtual bool blocksFlame() const
-		○ A function that returns whether or not an Actor blocks flame. It is used to aid in determining if an object will be damaged by           flames and in the creation of flames. Most objects do not block flames, so this function is virtual and its "default"                   implementation in Actor returns false. However, some Actors block flames, so this function is reimplemented for those Actors and         is therefore virtual.
-    
+		○ A function that returns whether or not an Actor blocks flame. It is used to aid in determining if an object will be damaged by flames and in the creation of flames. Most objects do not block flames, so this function is virtual and its "default" implementation in Actor returns false. However, some Actors block flames, so this function is reimplemented for those Actors and is therefore virtual.
 	- virtual bool triggersZombieVimit() const
-		○ A function that returns whether or not an Actor triggers zombie vomit. It is used to help determine if a zombie will vomit or not.       Most objects do not trigger Zombie vomit, so this function is virtual and its "default" implementation in Actor returns false.           However, Humans trigger Zombie vomit, so this function is reimplemented for those Humans and is therefore virtual.
-    
+		○ A function that returns whether or not an Actor triggers zombie vomit. It is used to help determine if a zombie will vomit or not. Most objects do not trigger Zombie vomit, so this function is virtual and its "default" implementation in Actor returns false. However, Humans trigger Zombie vomit, so this function is reimplemented for those Humans and is therefore virtual.
 	- virtual bool triggersOnlyActiveLandmines() const
-		○ A function that returns whether an Actor triggers landmines only active Landmines. Most objects don't, so the "defualt" returns         false, but it's virtual and is reimplemented.
-    
+		○ A function that returns whether an Actor triggers landmines only active Landmines. Most objects don't, so the "defualt" returns false, but it's virtual and is reimplemented.
 	- virtual bool threatensCitizens() const
-		○ A function that returns whether an Actor threatens citizens. Most don't, so the "default" implementation in Actor returns false.         However, Zombies do, so it is reimplemented in Zombie to return true.
-    
+		○ A function that returns whether an Actor threatens citizens. Most don't, so the "default" implementation in Actor returns false. However, Zombies do, so it is reimplemented in Zombie to return true.
 	- virtual bool triggersCitizens() const
-		○ A function that returns whether an Actor triggers citizens. Most don't, so the "default" implementation in Actor returns false.         However, Zombies and Penelope do, so it is reimplemented in both Penelope and in Zombie to return true.
+		○ A function that returns whether an Actor triggers citizens. Most don't, so the "default" implementation in Actor returns false. However, Zombies and Penelope do, so it is reimplemented in both Penelope and in Zombie to return true.
 
 
 
-CHIDREN CLASSES OF ACTOR CLASS:
+CHIDREN CLASS OF ACTOR CLASS:
 
 Wall class:
 	- Wall(StudentWorld* w, double x, double y)
@@ -253,11 +217,12 @@ Human class (derived from Agent):
 	- void incInfectionDuration()
 		○ increments infectionDuration
 
+
 Penelope class (derived from Human):
 	- Penelope(StudentWorld* w, double x, double y)
 		○ Penelope's constructor, initializes Citizen object
 	- bool attemptToMove(int dir, int howMuch)
-		○ Checks if moving howMuch in dir direction is possible, returns true and does it if it is, false otherwise. Since Penelope's             movements are controlled by the user, this had to be specified for the Penelope class.
+		○ Checks if moving howMuch in dir direction is possible, returns true and does it if it is, false otherwise. Since Penelope's movements are controlled by the user, this had to be specified for the Penelope class.
 	- virtual bool triggersCitizens() const
 		○ returns true
 	- virtual void pickUpGoodieIfAppropriate() const
@@ -293,6 +258,7 @@ DumbZombie class (derived from Zombie):
 		○ DumbZombie's constructor, initializes Zombie object
 	- virtual void doSomething()
 	- virtual void dieByFallOrBurnIfAppropriate()
+
 
 SmartZombie class (derived from Zombie):
 	- DumbZombie(StudentWorld* w, double x, double y)
